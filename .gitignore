@@ -1,0 +1,30 @@
+# Byte-compiled / optimized / DLL files
+
+# Don't commit training feedstocks you work on.
+training_feedstocks/*
+# But DO commit the cbc.yaml to save pinnings and zip keys.
+!training_feedstocks/conda_build_config.yaml
+
+# Python stuff.
+__pycache__/
+*.py[cod]
+*$py.class
+
+*.egg-info
+build/
+dist/
+skein/java/
+skein/proto/*_pb2*.py
+docs/build/
+.cache/
+.coverage
+.pytest_cache/
+.eggs/
+htmlcov/
+*.swp
+pkgs/
+~$*.xlsx
+batches/*/scans/*/*.txt
+.DS_Store
+.idea/
+.ipynb_checkpoints/
