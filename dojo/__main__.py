@@ -1,4 +1,5 @@
 import argparse
+import sys
 from dojo.utils import show_history, show_lessons, prune_repodata
 from dojo.lesson import start, stop, review, step_previous, \
     step_current, step_next, step_add_note, create_lesson
@@ -122,19 +123,19 @@ def main():
         start(args.lesson_name)
 
     elif args.subcommand == 'p':
-        # run previous step
+        # run (p)revious step
         pass
 
     elif args.subcommand == 'c':
-        # run current step
+        # run (c)urrent step
         pass
 
     elif args.subcommand == 'n':
-        # run next step
+        # run (n)ext step
         pass
 
     elif args.subcommand == 'a':
-        # run add note to current step
+        # run (a)dd note to current step
         pass
 
     elif args.subcommand == 'stop':
@@ -147,6 +148,7 @@ def main():
 
     elif args.subcommand == 'prune_repodata':
         # run prune_repodata
+        # --lesson
         # --subdir
         # --filenames, -f
         # --namespaces, -n
@@ -154,7 +156,8 @@ def main():
         pass
 
     else:
-        raise 'Invalid subcommand.'
+        print('Invalid subcommand, grasshopper.')
+        sys.exit(1)
 
 
 if __name__ == '__main__':

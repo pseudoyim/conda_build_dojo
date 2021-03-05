@@ -4,25 +4,11 @@ Interactions for and within a lesson.
 import os
 import pandas as pd
 import shutil
+import sys
 from dojo import ROOT_DIR, LESSONS_DIR, TRAINING_FEEDSTOCKS_DIR
 from dojo.utils import get_latest, get_repodata_snapshot, \
     update_history, create_lesson_progress, get_lesson_progress, update_lesson_progress
 from git import Repo
-
-
-def load_lesson_specs(lesson_name):
-    '''
-    Gets specs from the lesson.yaml
-    '''
-    lesson_yaml_path = os.path.join(LESSONS_DIR, lesson_name, 'lesson.yaml')
-
-    try:
-        with open(lesson_yaml_path, mode='r') as lesson_specs:
-            import yaml    # i.e. pyyaml
-            return yaml.safe_load(lesson_specs)
-    except FileNotFoundError:
-        print(f'Error: lesson.yaml for {lesson_name} not found.')
-        sys.exit(1)
 
 
 def clone_checkout_feedstock(feedstock_url, commit):
@@ -52,7 +38,10 @@ def clone_checkout_feedstock(feedstock_url, commit):
 
 
 def create_lesson(lesson_name, target_platform, repodata_snapshot=False):
-
+    '''
+    Creates a lesson directory, a lesson.yaml, and (optionally)
+    a snapshot of repodata that can be edited.
+    '''
     subdirs = ['noarch', target_platform]
 
     if repodata_snapshot:
@@ -77,53 +66,95 @@ def display_prompt(contents, verbose=False):
 
     prompt_location = contents['prompt_location']
     prompt = contents['prompt']
-    print('############### CONDA-BUILD DOJO ###############')
+    print('\n=============== CONDA-BUILD DOJO ===============')
     print(details)
     print(f'\n(Step {prompt_location}) {prompt}')
-    print(f'\nOPTIONS: dojo (p)revious step; (c)urrent step; (n)ext step; (a)dd note; (stop) lesson.')
-    print('################################################')
+    print('\n================================================')
+    print(f'OPTIONS: dojo (p)revious step; (c)urrent step; (n)ext step; (a)dd note; (stop) lesson.')
+
+
+def load_lesson_specs(lesson_name):
+    '''
+    Gets specs from the lesson.yaml
+    '''
+    lesson_yaml_path = os.path.join(LESSONS_DIR, lesson_name, 'lesson.yaml')
+
+    try:
+        with open(lesson_yaml_path, mode='r') as lesson_specs:
+            import yaml    # i.e. pyyaml
+            return yaml.safe_load(lesson_specs)
+    except FileNotFoundError:
+        print(f'Error: lesson.yaml for {lesson_name} not found.')
+        sys.exit(1)
 
 
 def review(lesson_name):
+    print('dojo review (NOT YET IMPLEMENTED)')
     pass
 
 
 def start(lesson_name):
 
-    lesson_specs = load_lesson_specs(lesson_name)
-    feedstock_url = lesson_specs['feedstock_url']
-    commit = lesson_specs['commit']
+    # Check whether a progress.csv already exists (which would mean
+    # they've started this lesson before). 
+    # If so, ask whether they want to resume or start over.
+    if os.path.exists(os.path.join(LESSONS_DIR, lesson_name, 'progress.csv')):
+        while True:
+            user_response = str(input(f'You previously started "{lesson_name}". Do you wish to (c)ontinue where you left off, or (s)tart over? '))
+            if user_response.lower() not in ['c', 's']:
+                print('Sorry, I did not understand.')
+            else:
+                break
+        if user_response.lower() == 'c':
+            update_history(lesson_name, 'resume')
+            step_current(verbose=True)
+        elif user_response.lower() == 's':
+            update_history(lesson_name, 'start over')
+            update_lesson_progress(lesson_name, 0)
+            step_current(verbose=True)
 
-    # Get feedstock.
-    clone_target_path = clone_checkout_feedstock(feedstock_url, commit)
+    else:
+        lesson_specs = load_lesson_specs(lesson_name)
+        feedstock_url = lesson_specs['feedstock_url']
+        commit = lesson_specs['commit']
 
-    # If modified_repodata == True, 
-    # edit the .condarc to point to local repodata.
-    if lesson_specs['modified_repodata']:
-        # Alter .condarc
-        pass
+        # Get feedstock.
+        clone_target_path = clone_checkout_feedstock(feedstock_url, commit)
 
-    # Update history.csv.
-    update_history(lesson_name, 'start')
+        # If modified_repodata == True, 
+        # edit the .condarc to point to local repodata.
+        if lesson_specs['modified_repodata']:
+            # Alter .condarc
+            print('Modify .condarc (NOT YET IMPLEMENTED)')
+            pass
 
-    # Create lesson progress.csv.
-    create_lesson_progress(lesson_name)
+        # Update history.csv.
+        update_history(lesson_name, 'start')
 
-    # Display lesson info and step 1. (Indicate progress, e.g. "Step 1 of 12")
-    total_num_prompts = len(lesson_specs['prompts'])
-    contents = {'title': lesson_specs['title'],
-                'objectives': lesson_specs['objectives'],
-                'target_package': lesson_specs['target_package'],
-                'feedstock_path': clone_target_path,
-                'prompt_location': f'1 of {total_num_prompts}',
-                'prompt': lesson_specs['prompts'][0],
-               }
-    display_prompt(contents, verbose=True)
+        # Create lesson progress.csv.
+        create_lesson_progress(lesson_name)
+
+        # Display lesson info and step 1. (Indicate progress, e.g. "Step 1 of 12")
+        total_num_prompts = len(lesson_specs['prompts'])
+        contents = {'title': lesson_specs['title'],
+                    'objectives': lesson_specs['objectives'],
+                    'target_package': lesson_specs['target_package'],
+                    'feedstock_path': clone_target_path,
+                    'prompt_location': f'1 of {total_num_prompts}',
+                    'prompt': lesson_specs['prompts'][0],
+                   }
+        display_prompt(contents, verbose=True)
 
 
 def step_previous(verbose=False):
-    # If verbose, show all info and previously completed steps too.
+    # Read history.csv to lookup which lesson is active,
+    
+    # Go to that lesson's progress.csv to lookup
+    # the current step they're on. 
+    
+    # Then go to previous step.
 
+    # If verbose, show all info and previously completed steps too.
     pass
 
 
@@ -138,6 +169,7 @@ def step_next(verbose=False):
 
 
 def step_add_note():
+    print('Add note (NOT YET IMPLEMENTED)')
     pass
 
 

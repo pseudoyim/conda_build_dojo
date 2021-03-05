@@ -1,22 +1,22 @@
-# IMPORTANT: Make sure you save the snapshot of the repodata.json
-# files you intend the learner to use for this lesson. They should be 
-# saved in the tree structure as shown in this example:
+# IMPORTANT: If your lesson requires a snapshot of repodata in a certain 
+# state (e.g. missing some dependencies for python-3.9), then please make
+# sure the repodata is saved in the following directory structure:
 #
-#    lessons/
-#      |---- 0001_version_bump/
-#              |---- lesson.yaml
-#              |---- repodata/
-#                      |---- linux-64/
-#                              |---- repodata.json
-#                      |---- noarch/
-#                              |---- repodata.json
+# dojo/
+#   |---- lessons/
+#           |---- 0001_version_bump/
+#                   |---- dojo_repodata/
+#                           |---- linux-64/
+#                                   |---- repodata.json
+#                           |---- noarch/
+#                                   |---- repodata.json
 
 # The lesson title.
 title: "How to do a version bump"
 
 # Learning objectives. 
-# Should complete this sentence: 
-# "By the end of this lesson, you will be able to..."
+# Each objective should help complete this sentence: 
+# "By the end of this lesson, the learner will be able to..."
 objectives: 
   - "Build an updated version of tqdm."
 
@@ -32,17 +32,19 @@ feedstock_url: https://github.com/AnacondaRecipes/tqdm-feedstock.git
 # The specific commit hash that should be initially checked out.
 # This acts as the starting point for the learner, a "snapshot" in time from 
 # which they will complete their lesson objectives.
-commit: 92b0bf2c6ff63caee6f521a6bc85af2d2395c0bf    # Committed Jan 9, 2021
+commit: 92b0bf2c6ff63caee6f521a6bc85af2d2395c0bf
 
 # Indicates whether this lesson requires a modified repodata "snapshot".
 # In other words, a version of defaults that's been edited to recreate the 
 # starting point for the lesson.
-modified_repodata: True
+modified_repodata: False
 
-# Lesson prompts (or steps)
+# Lesson prompts (or steps).
 # List the propmpts/steps the learner should go through.
 # You can also pose questions and answers (for example, one prompt is 
-# a question, and the following prompt is the answer to that question).
+# a question, and the subsequent prompt is the answer to that question).
+# BONUS: Provide hints to the learner (just tell them the hint will be 
+# revealed in the next step if they want it).
 prompts:
   - Open the meta.yaml and find the current version and sha256 hash.
   - Go to https://pypi.org/project/tqdm/4.58.0/#files and get the latest version number and sha256 hash.

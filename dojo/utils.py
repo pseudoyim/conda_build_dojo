@@ -9,7 +9,7 @@ import requests
 import sys
 import yaml
 from datetime import datetime
-from dojo import ROOT_DIR
+from dojo import ROOT_DIR, LESSONS_DIR
 
 try:
     from cStringIO import StringIO
@@ -56,7 +56,7 @@ def get_repodata_snapshot(lesson_name, subdirs):
     print(f'Creating repodata snapshots for {subdirs}...')
 
     ts = get_timestamp_for_file()
-    repodata_snapshot_dir = f'{ROOT_DIR}/lessons/{lesson_name}/repodata/{ts}'
+    repodata_snapshot_dir = f'{ROOT_DIR}/lessons/{lesson_name}/dojo_repodata/{ts}'
 
     for subdir in subdirs:
         # Create sub-directory tree.
@@ -103,7 +103,7 @@ def show_history(all_history=False):
 def show_lessons(all_platforms=False):
     # Load conda_build_dojo/curriculum.yaml
 
-    # Display tree of lessons available, (title, objectives, target_package).
+    # Display tree of lessons available, (title, lesson_name, objectives, target_package).
 
     pass
 
@@ -132,18 +132,24 @@ def update_history(lesson_name, action):
 
 
 def create_lesson_progress(lesson_name):
-    columns = ['start_timestamp', 'lesson_index', 'note']
+    columns = ['lesson_name', 'start_timestamp', 'lesson_index', 'note']
     ts = get_timestamp_for_action()
-    row = [ts, 0, '']
+    row = [lesson_name, ts, 0, '']
     df = pd.DataFrame([row], columns=columns)
-    df.to_csv(f'{ROOT_DIR}/lessons/{lesson_name}/progress.csv', index=False)
+    df.to_csv(f'{LESSONS_DIR}/{lesson_name}/progress.csv', index=False)
 
 
 def get_lesson_progress(lesson_name):
-    df_lesson_progress = pd.read_csv(f'{ROOT_DIR}/lessons/{lesson_name}/progress.csv')
+    df = pd.read_csv(f'{LESSONS_DIR}/{lesson_name}/progress.csv')
+    # Return the last row.
+    return df.tail(1).to_list()
 
-    pass
 
+def update_lesson_progress(lesson_name, step_index, note=''):
+    ts = get_timestamp_for_action()
+    # By 'update', we're just adding a row.
+    df = pd.read_csv(f'{LESSONS_DIR}/{lesson_name}/progress.csv')
+    new_row = [lesson_name, ts, step_index, note]
+    df = df.append(new_row, ignore_index=True)
+    df.to_csv(f'{LESSONS_DIR}/{lesson_name}/progress.csv', index=False)    
 
-def update_lesson_progress(lesson_name, step_index):
-    pass
