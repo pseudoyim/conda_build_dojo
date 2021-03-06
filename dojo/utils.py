@@ -22,6 +22,13 @@ except ImportError:
 
 PROGRESS_COLUMNS = ['lesson_name', 'start_timestamp', 'lesson_index', 'note']
 
+def add_lesson_yaml(new_lesson_path):
+    # Add lesson yaml in new lesson dir.
+    save_path = os.path.join(new_lesson_path, 'lesson.yaml')
+    with open(save_path, 'w') as lesson_yaml:
+        lesson_yaml.write(LESSON_YAML_TEMPLATE)
+    print('Created new lesson.yaml template.')
+
 
 def get_timestamp_for_file():
     ts_format = '%Y%m%d_%H%M%S'
@@ -52,14 +59,14 @@ def get_latest():
     get_lesson_progress(latest_lesson_name)
 
 
-def get_repodata_snapshot(lesson_name, subdirs):
+def get_repodata_snapshot(lesson_folder_name, subdirs):
     '''
     Takes a snapshot of the current repodata.json for defaults.
     '''
-    print(f'Creating repodata snapshots for {subdirs}...')
+    print(f'\nCreating repodata snapshots for {subdirs}...')
 
     ts = get_timestamp_for_file()
-    repodata_snapshot_dir = f'{ROOT_DIR}/lessons/{lesson_name}/dojo_repodata/{ts}'
+    repodata_snapshot_dir = f'{LESSONS_DIR}/{lesson_folder_name}/dojo_repodata/{ts}'
 
     for subdir in subdirs:
         # Create sub-directory tree.
@@ -155,4 +162,65 @@ def update_lesson_progress(lesson_name, step_index, note=''):
     df_new_row = pd.DataFrame([new_row], columns=PROGRESS_COLUMNS)
     df = df.append(df_new_row, ignore_index=True)
     df.to_csv(f'{LESSONS_DIR}/{lesson_name}/progress.csv', index=False)    
+
+
+LESSON_YAML_TEMPLATE = '''# PLEASE ADD VALUES FOR ALL KEYS BELOW.
+
+# IMPORTANT: If your lesson requires a snapshot of repodata in a certain 
+# state (e.g. missing some dependencies for python-3.9), then please make
+# sure the repodata is saved in the following directory structure:
+#
+# dojo/
+#   |---- lessons/
+#           |---- 0001_version_bump/
+#                   |---- dojo_repodata/
+#                           |---- linux-64/
+#                                   |---- repodata.json
+#                           |---- noarch/
+#                                   |---- repodata.json
+
+# The lesson title.
+# Example: "How to do a version bump"
+title: 
+
+# Learning objectives. 
+# Each objective should help complete this sentence: 
+# "By the end of this lesson, the learner will be able to..."
+objectives: 
+  - "EXAMPLE OBJECTIVE"
+
+# Package name and version the learner will be attempting to build.
+# Example: numpy-1.16.0
+target_package:
+
+# Target platform the package will be built for.
+# Examples: linux-64, osx-64, win-64, noarch
+target_platform: 
+
+# URL to the feedstock (use HTTPS, not SSH, to avoid the need for a key).
+# Example: https://github.com/AnacondaRecipes/tqdm-feedstock.git
+feedstock_url: 
+
+# The specific commit hash from the feedstock repo that should be initially 
+# checked out. This acts as the starting point for the learner, a "snapshot"
+# in time from which they will complete their lesson objectives.
+commit: 
+
+# Indicates whether this lesson requires a modified repodata "snapshot".
+# In other words, a version of defaults that's been edited to recreate the 
+# starting point for the lesson. 
+# If your lesson requires the repodata snapshot, update this to be "True".
+modified_repodata: False
+
+# Lesson prompts (or steps).
+# List the propmpts/steps the learner should go through.
+# You can also pose questions and answers (for example, one prompt is 
+# a question, and the subsequent prompt is the answer to that question).
+# BONUS: Provide hints to the learner (just tell them the hint will be 
+# revealed in the next step if they want it).
+prompts:
+  - EXAMPLE - Open the meta.yaml...
+  - EXAMPLE - Increment the build number...
+'''
+
 

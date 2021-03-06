@@ -1,3 +1,5 @@
+# PLEASE ADD VALUES FOR ALL KEYS BELOW.
+
 # IMPORTANT: If your lesson requires a snapshot of repodata in a certain 
 # state (e.g. missing some dependencies for python-3.9), then please make
 # sure the repodata is saved in the following directory structure:
@@ -12,31 +14,36 @@
 #                                   |---- repodata.json
 
 # The lesson title.
-title: "How to do a version bump"
+# Example: "How to do a version bump"
+title: 
 
 # Learning objectives. 
 # Each objective should help complete this sentence: 
 # "By the end of this lesson, the learner will be able to..."
 objectives: 
-  - "Build an updated version of tqdm."
+  - "EXAMPLE OBJECTIVE"
 
 # Package name and version the learner will be attempting to build.
-target_package: tqdm-4.56.0
+# Example: numpy-1.16.0
+target_package:
 
 # Target platform the package will be built for.
-target_platform: noarch
+# Examples: linux-64, osx-64, win-64, noarch
+target_platform: 
 
 # URL to the feedstock (use HTTPS, not SSH, to avoid the need for a key).
-feedstock_url: https://github.com/AnacondaRecipes/tqdm-feedstock.git
+# Example: https://github.com/AnacondaRecipes/tqdm-feedstock.git
+feedstock_url: 
 
 # The specific commit hash from the feedstock repo that should be initially 
 # checked out. This acts as the starting point for the learner, a "snapshot"
 # in time from which they will complete their lesson objectives.
-commit: 92b0bf2c6ff63caee6f521a6bc85af2d2395c0bf
+commit: 
 
 # Indicates whether this lesson requires a modified repodata "snapshot".
 # In other words, a version of defaults that's been edited to recreate the 
-# starting point for the lesson.
+# starting point for the lesson. 
+# If your lesson requires the repodata snapshot, update this to be "True".
 modified_repodata: False
 
 # Lesson prompts (or steps).
@@ -46,5 +53,5 @@ modified_repodata: False
 # BONUS: Provide hints to the learner (just tell them the hint will be 
 # revealed in the next step if they want it).
 prompts:
-  - Open the meta.yaml and find the current version and sha256 hash.
-  - Go to https://pypi.org/project/tqdm/4.58.0/#files and get the latest version number and sha256 hash.
+  - EXAMPLE - Open the meta.yaml...
+  - EXAMPLE - Increment the build number...

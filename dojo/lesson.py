@@ -6,7 +6,7 @@ import pandas as pd
 import shutil
 import sys
 from dojo import ROOT_DIR, LESSONS_DIR, TRAINING_FEEDSTOCKS_DIR
-from dojo.utils import get_latest, get_repodata_snapshot, \
+from dojo.utils import add_lesson_yaml, get_latest, get_repodata_snapshot, \
     update_history, create_lesson_progress, get_lesson_progress, update_lesson_progress
 from git import Repo
 
@@ -37,17 +37,34 @@ def clone_checkout_feedstock(feedstock_url, commit):
     return clone_target_path
 
 
-def create_lesson(lesson_name, target_platform, repodata_snapshot=False):
+def create_lesson(new_lesson_name, target_platform, repodata_snapshot=False):
     '''
     Creates a lesson directory, a lesson.yaml, and (optionally)
     a snapshot of repodata that can be edited.
     '''
     subdirs = ['noarch', target_platform]
 
-    if repodata_snapshot:
-        get_repodata_snapshot(lesson_name, subdirs)
+    # Create lesson directory (increments from last lesson's number).
+    last_lesson_number = get_last_lesson_number()
+    new_lesson_number_str = str(last_lesson_number + 1)
+    new_lesson_number_str = new_lesson_number_str.zfill(3)
+    new_lesson_folder = f'{new_lesson_number_str}_{new_lesson_name}'
+    new_lesson_path = os.path.join(LESSONS_DIR, new_lesson_folder)
+    os.mkdir(new_lesson_path)
 
-    pass
+    # Add a lesson.yaml (will need to be edited by the lesson creator).
+    add_lesson_yaml(new_lesson_path)
+
+    # Download and save repodata snapshot, if specified.
+    if repodata_snapshot:
+        get_repodata_snapshot(new_lesson_folder, subdirs)
+
+    # Show info about where to find the new directory and next steps.
+    print(f'New lesson created at: {new_lesson_path}')
+    print('In this directory, you will find the "lesson.yaml". Please add your lesson content in this file.')
+    if repodata_snapshot:
+        print(f'You also created a repodata snapshot to use in your lesson (see {new_lesson_path}/dojo_repodata).')
+        print('Please use the "dojo prune_repodata" command to edit this repodata.')
 
 
 def display_prompt(lesson_name, lesson_specs, step_index, verbose=False):
@@ -57,14 +74,6 @@ def display_prompt(lesson_name, lesson_specs, step_index, verbose=False):
 
     # Display lesson info and step 1. (Indicate progress, e.g. "Step 1 of 12")
     total_num_prompts = len(lesson_specs['prompts'])
-
-    # contents = {'title': lesson_specs['title'],
-    #             'objectives': lesson_specs['objectives'],
-    #             'target_package': lesson_specs['target_package'],
-    #             'feedstock_path': feedstock_path,
-    #             'prompt_location': f'{step_index + 1} of {total_num_prompts}',
-    #             'prompt': lesson_specs['prompts'][step_index],
-    #            }
 
     if verbose:
         details = f'\nTitle: {lesson_specs["title"]}'
@@ -84,7 +93,13 @@ def display_prompt(lesson_name, lesson_specs, step_index, verbose=False):
         print(details)
     print(f'\n(Step {prompt_location}) {prompt}')
     print('\n================================================')
-    print(f'OPTIONS: dojo (p)revious step; (c)urrent step; (n)ext step; (a)dd note; (stop) lesson.')
+    print(f'OPTIONS: dojo (p)revious; (c)urrent; (n)ext; (j)ump; (a)dd note; (stop) lesson.')
+
+
+def get_last_lesson_number():
+    from glob import glob
+    all_lesson_dirs = glob(os.path.join(LESSONS_DIR,'*'))
+    return max([int(n.split('/')[-1].split('_')[0]) for n in all_lesson_dirs])
 
 
 def get_repo_name(feedstock_url):
@@ -104,11 +119,6 @@ def load_lesson_specs(lesson_name):
     except FileNotFoundError:
         print(f'Error: lesson.yaml for {lesson_name} not found.')
         sys.exit(1)
-
-
-def review(lesson_name):
-    print('dojo review (NOT YET IMPLEMENTED)')
-    pass
 
 
 def start(lesson_name):
@@ -175,6 +185,11 @@ def step_current(verbose=False):
 
 
 def step_next(verbose=False):
+    # If verbose, show all info.
+    pass
+
+
+def step_jump(step_number, verbose=False):
     # If verbose, show all info.
     pass
 

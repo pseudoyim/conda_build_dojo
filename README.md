@@ -11,19 +11,7 @@ a hall or place for immersive learning or meditation.
 - Every new action is tracked in history.csv
 - Utility to add repodata snapshot to a lesson
 - Utility to remove packages from repodata.json (by filename, namespace, version numbers)
-- patch Conda (to solve from repodata but actually still download packages from defaults)
-    - conda/core/path_actions.py (line 1106):
-          # THIS IS WHAT YOU NEED TO PATCH IN:
-          if 'dojo_repodata' in url:
-              print('OLD url', url)
-
-              sub, fn_conda = url.split('/')[-2:]
-              new_url = join('https://repo.anaconda.com/pkgs/main', sub, fn_conda)
-
-              print('NEW url', new_url)
-              self.url = new_url
 - When starting a lesson with modified_repodata, update their .condarc (back up the existing with "bak_20210202")
--
 
 
 ## Development

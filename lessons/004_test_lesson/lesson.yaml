@@ -1,3 +1,4 @@
+
 # IMPORTANT: If your lesson requires a snapshot of repodata in a certain 
 # state (e.g. missing some dependencies for python-3.9), then please make
 # sure the repodata is saved in the following directory structure:

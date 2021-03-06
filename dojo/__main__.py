@@ -1,8 +1,8 @@
 import argparse
 import sys
 from dojo.utils import show_history, show_lessons, prune_repodata
-from dojo.lesson import start, stop, review, step_previous, \
-    step_current, step_next, step_add_note, create_lesson
+from dojo.lesson import start, stop, step_previous, step_current, \
+    step_next, step_jump, step_add_note, create_lesson
 
 
 def main():
@@ -43,14 +43,6 @@ def main():
     help_msg_stop = '''Stop the current lesson.'''
     subcmd_stop = subparsers.add_parser('stop', help=help_msg_stop)
 
-    # Subcommand: review
-    help_msg_review = '''Review a lesson you've completed.'''
-    subcmd_history = subparsers.add_parser('review', help=help_msg_review)
-    subcmd_history.add_argument(
-        'lesson_name',
-        help='Name of lesson to review.',
-        )
-
     # Subcommand: previous
     help_msg_previous = '''(p)revious: Go to previous step in current lesson.'''
     subcmd_previous = subparsers.add_parser('p', help=help_msg_previous)
@@ -78,6 +70,19 @@ def main():
         help='Include all info about the current lesson.',
         )
 
+    # Subcommand: jump
+    help_msg_jump = '''(j)ump to a specific step in the current lesson.'''
+    subcmd_jump = subparsers.add_parser('j', help=help_msg_jump)
+    subcmd_jump.add_argument(
+        'step_number',
+        help='The step number to jump to in the current lesson.',
+        )
+    subcmd_jump.add_argument(
+        '-v',
+        '--verbose',
+        help='Include all info about the current lesson.',
+        )
+
     # Subcommand: add_note
     help_msg_add_note = '''(a)dd: Add a note to the current step.'''
     subcmd_add_note = subparsers.add_parser('a', help=help_msg_add_note)
@@ -87,19 +92,17 @@ def main():
     subcmd_create_lesson = subparsers.add_parser('create_lesson', help=argparse.SUPPRESS)
     subcmd_create_lesson.add_argument(
         '--name',
-        help='Name of the lesson.',
-        required=True,
+        help='Short name of the lesson (use underscores instead of spaces). For example: "creating_a_patch".',
         )
-    subcmd_create_lesson.add_argument(
-        '--target-platform',
-        help='Platform the lesson should be run on (options: linux-64, win-64, osx-64).',
-        required=True,
-        )  
     subcmd_create_lesson.add_argument(
         '--repodata-snapshot',
         action='store_true',
         help='Whether to include a snapshot of the current repodata.json file from defaults.',
         )
+    subcmd_create_lesson.add_argument(
+        '--target-platform',
+        help='(Required for repodata snapshot) Platform the lesson should be run on (options: linux-64, osx-64, and win-64).',
+        )  
 
     # Subcommand: prune_repodata
     # (This command is not listed in --help)
@@ -109,22 +112,18 @@ def main():
 
     if args.subcommand == 'history':
         # run history
-        pass
+        show_history()
 
     elif args.subcommand == 'lessons':
         # run lessons
-        pass
-
-    elif args.subcommand == 'review':
-        # run review
-        pass
+        show_lessons()
 
     elif args.subcommand == 'start':
         start(args.lesson_name)
 
     elif args.subcommand == 'p':
         # run (p)revious step
-        pass
+        step_previous(verbose=args.verbose)
 
     elif args.subcommand == 'c':
         # run (c)urrent step
@@ -132,7 +131,11 @@ def main():
 
     elif args.subcommand == 'n':
         # run (n)ext step
-        pass
+        step_next(verbose=args.verbose)
+
+    elif args.subcommand == 'j':
+        # run jump
+        step_jump(args.step_number, verbose=args.verbose)
 
     elif args.subcommand == 'a':
         # run (a)dd note to current step
@@ -144,6 +147,9 @@ def main():
 
     elif args.subcommand == 'create_lesson':
         # run create_lesson
+        if ' ' in args.name:
+            print(f'Invalid lesson name: "{args.name}". Please use underscores instead of spaces.')
+            sys.exit(1)
         create_lesson(args.name, args.target_platform, repodata_snapshot=args.repodata_snapshot)
 
     elif args.subcommand == 'prune_repodata':
@@ -156,7 +162,7 @@ def main():
         pass
 
     else:
-        print('Invalid subcommand, grasshopper.')
+        print('Invalid subcommand.')
         sys.exit(1)
 
 
