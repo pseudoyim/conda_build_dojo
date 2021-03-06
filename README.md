@@ -7,6 +7,7 @@ a hall or place for immersive learning or meditation.
 *Conda-Build Dojo* guides you through debugging scenarios encountered during package building.
 
 ## TODO
+- Have env var $DOJO_RECIPE point to the recipe path.
 - Every new action is tracked in history.csv
 - Utility to add repodata snapshot to a lesson
 - Utility to remove packages from repodata.json (by filename, namespace, version numbers)

@@ -17,7 +17,7 @@ def clone_checkout_feedstock(feedstock_url, commit):
     out the specified commmit.
     '''
     print('Setting up feedstock snapshot...')
-    repo_name = feedstock_url.split('/')[-1].split('.git')[0]
+    repo_name = get_repo_name(feedstock_url)
     os.chdir(TRAINING_FEEDSTOCKS_DIR)
 
     print(f'Cloning {repo_name} at {commit}')
@@ -50,27 +50,45 @@ def create_lesson(lesson_name, target_platform, repodata_snapshot=False):
     pass
 
 
-def display_prompt(contents, verbose=False):
+def display_prompt(lesson_name, lesson_specs, step_index, verbose=False):
+
+    repo_name = get_repo_name(lesson_specs['feedstock_url'])
+    recipe_path = os.path.join(TRAINING_FEEDSTOCKS_DIR, repo_name, 'recipe')
+
+    # Display lesson info and step 1. (Indicate progress, e.g. "Step 1 of 12")
+    total_num_prompts = len(lesson_specs['prompts'])
+
+    # contents = {'title': lesson_specs['title'],
+    #             'objectives': lesson_specs['objectives'],
+    #             'target_package': lesson_specs['target_package'],
+    #             'feedstock_path': feedstock_path,
+    #             'prompt_location': f'{step_index + 1} of {total_num_prompts}',
+    #             'prompt': lesson_specs['prompts'][step_index],
+    #            }
 
     if verbose:
-        title = contents['title']
-        details = f'\nTitle: {title}'
+        details = f'\nTitle: {lesson_specs["title"]}'
         details += '\nObjectives:'
-        for obj in contents['objectives']:
+        for obj in lesson_specs['objectives']:
             details += f'\n  - {obj}'
-        feedstock_path = contents['feedstock_path']
-        details += f'\nRecipe path: {feedstock_path}/recipe'
+        details += f'\nRecipe path: {recipe_path}'
 
     else:
-        details = ''
+        details = None
 
-    prompt_location = contents['prompt_location']
-    prompt = contents['prompt']
+    prompt_location = f'{step_index + 1} of {total_num_prompts}'
+    prompt = lesson_specs['prompts'][step_index]
+
     print('\n=============== CONDA-BUILD DOJO ===============')
-    print(details)
+    if details:
+        print(details)
     print(f'\n(Step {prompt_location}) {prompt}')
     print('\n================================================')
     print(f'OPTIONS: dojo (p)revious step; (c)urrent step; (n)ext step; (a)dd note; (stop) lesson.')
+
+
+def get_repo_name(feedstock_url):
+    return feedstock_url.split('/')[-1].split('.git')[0]
 
 
 def load_lesson_specs(lesson_name):
@@ -94,7 +112,6 @@ def review(lesson_name):
 
 
 def start(lesson_name):
-
     # Check whether a progress.csv already exists (which would mean
     # they've started this lesson before). 
     # If so, ask whether they want to resume or start over.
@@ -134,16 +151,10 @@ def start(lesson_name):
         # Create lesson progress.csv.
         create_lesson_progress(lesson_name)
 
-        # Display lesson info and step 1. (Indicate progress, e.g. "Step 1 of 12")
-        total_num_prompts = len(lesson_specs['prompts'])
-        contents = {'title': lesson_specs['title'],
-                    'objectives': lesson_specs['objectives'],
-                    'target_package': lesson_specs['target_package'],
-                    'feedstock_path': clone_target_path,
-                    'prompt_location': f'1 of {total_num_prompts}',
-                    'prompt': lesson_specs['prompts'][0],
-                   }
-        display_prompt(contents, verbose=True)
+        # Start at index 0.
+        step_index = 0
+
+        display_prompt(lesson_name, lesson_specs, step_index, verbose=True)
 
 
 def step_previous(verbose=False):
@@ -160,7 +171,7 @@ def step_previous(verbose=False):
 
 def step_current(verbose=False):
     # If verbose, show all info and previously completed steps too.
-    pass
+    last_move = get_latest()
 
 
 def step_next(verbose=False):

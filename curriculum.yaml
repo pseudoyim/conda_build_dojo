@@ -1,5 +1,5 @@
 lessons:
   basics:
-    - "0001_version_bump"
+    - "001_version_bump"
   debugging:
-    - "0010_oniguruma_breaking_changes"
+    - "002_oniguruma_breaking_changes"

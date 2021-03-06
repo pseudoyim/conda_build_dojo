@@ -128,7 +128,7 @@ def main():
 
     elif args.subcommand == 'c':
         # run (c)urrent step
-        pass
+        step_current(verbose=args.verbose)
 
     elif args.subcommand == 'n':
         # run (n)ext step
