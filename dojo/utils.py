@@ -22,6 +22,7 @@ except ImportError:
 
 PROGRESS_COLUMNS = ['lesson_name', 'start_timestamp', 'lesson_index', 'note']
 
+
 def add_lesson_yaml(new_lesson_path):
     # Add lesson yaml in new lesson dir.
     save_path = os.path.join(new_lesson_path, 'lesson.yaml')
@@ -30,33 +31,39 @@ def add_lesson_yaml(new_lesson_path):
     print('Created new lesson.yaml template.')
 
 
-def get_timestamp_for_file():
-    ts_format = '%Y%m%d_%H%M%S'
-    now = datetime.utcnow()
-    return now.strftime(ts_format)
-
-
-def get_timestamp_for_action():
-    ts_format = '%Y-%m-%d %H:%M:%S'
-    now = datetime.utcnow()
-    return now.strftime(ts_format) + ' UTC'
+def configure_condarc(lesson_name):
+    print('Setting up repo snapshot...')
+    print('Updating your .condarc to point to repodata snapshot from <TIMESTAMP> for the following subdirs:')
+    # Point .condarc channel to only point at local 'lesson_name/repodata/ts/' directory.
+    pass
 
 
 def get_latest():
-
-    # Get latest lesson from history.csv
+    
     df_history = pd.read_csv(f'{ROOT_DIR}/history.csv', index_col=False)
 
-    try:
-        last_row = list(df_history.tail(1).values)[0]
-        latest_lesson_name = last_row[1]
-
-    except: # No rows in the history.csv
-        print('You have no history. Please start a lesson to create one.')
+    if len(df_history.index) == 0:
+        # i.e. there are no rows in the history.csv
+        print('You have no lesson history. Please start a lesson to begin one.')
         sys.exit(1)
+    
+    else:
+        # Get latest active lesson from history.csv
+        last_row = list(df_history.tail(1).values)[0]
 
-    # Get latest step from <lesson>/progress.csv
-    get_lesson_progress(latest_lesson_name)
+        # Check if the last record has "active = True".
+        active_status = last_row[-1]
+        if active_status is True:
+            latest_lesson_name = last_row[1]
+        else:
+            print('No active lesson. Please start one.')
+            sys.exit(1)
+
+    # Get latest row from <lesson>/progress.csv
+    # Looks like: [lesson_name, start_timestamp, lesson_index, note]
+    latest_row = get_lesson_progress(latest_lesson_name)
+
+    return latest_row[0], latest_row[2]
 
 
 def get_repodata_snapshot(lesson_folder_name, subdirs):
@@ -91,15 +98,32 @@ def get_repodata_snapshot(lesson_folder_name, subdirs):
     print('...success!')
 
 
+def get_timestamp_for_file():
+    ts_format = '%Y%m%d_%H%M%S'
+    now = datetime.utcnow()
+    return now.strftime(ts_format)
+
+
+def get_timestamp_for_action():
+    ts_format = '%Y-%m-%d %H:%M:%S'
+    now = datetime.utcnow()
+    return now.strftime(ts_format) + ' UTC'
+
+
 def prune_repodata():
     pass
 
 
-def configure_condarc(lesson_name):
-    print('Setting up repo snapshot...')
-    print('Updating your .condarc to point to repodata snapshot from <TIMESTAMP> for the following subdirs:')
-    # Point .condarc channel to only point at local 'lesson_name/repodata/ts/' directory.
+def search_tag(tag):
     pass
+
+
+#################
+#    HISTORY    #
+#################
+
+def get_history():
+    return pd.read_csv(os.path.join(ROOT_DIR, 'history.csv'), index_col=False)
 
 
 def show_history(all_history=False):
@@ -108,18 +132,6 @@ def show_history(all_history=False):
     # Display table of last ten actions.
 
     pass
-
-
-def show_lessons(all_platforms=False):
-    # Load conda_build_dojo/curriculum.yaml
-
-    # Display tree of lessons available, (title, lesson_name, objectives, target_package).
-
-    pass
-
-
-def get_history():
-    return pd.read_csv(os.path.join(ROOT_DIR, 'history.csv'), index_col=False)
 
 
 def update_history(lesson_name, action):
@@ -141,6 +153,18 @@ def update_history(lesson_name, action):
     df_history.to_csv(os.path.join(ROOT_DIR, 'history.csv'), index=False)
 
 
+#################
+#    LESSONS    #
+#################
+
+def show_lessons(all_platforms=False):
+    # Load conda_build_dojo/curriculum.yaml
+
+    # Display tree of lessons available, (title, lesson_name, objectives, target_package).
+
+    pass
+
+
 def create_lesson_progress(lesson_name):
     ts = get_timestamp_for_action()
     row = [lesson_name, ts, 0, '']
@@ -151,7 +175,7 @@ def create_lesson_progress(lesson_name):
 def get_lesson_progress(lesson_name):
     df = pd.read_csv(f'{LESSONS_DIR}/{lesson_name}/progress.csv', index_col=False)
     # Return the last row.
-    return list(df.tail(1).values)
+    return df.values[-1].tolist()
 
 
 def update_lesson_progress(lesson_name, step_index, note=''):
@@ -164,6 +188,11 @@ def update_lesson_progress(lesson_name, step_index, note=''):
     df.to_csv(f'{LESSONS_DIR}/{lesson_name}/progress.csv', index=False)    
 
 
+###################
+#    TEMPLATES    #
+###################
+
+
 LESSON_YAML_TEMPLATE = '''# PLEASE ADD VALUES FOR ALL KEYS BELOW.
 
 # IMPORTANT: If your lesson requires a snapshot of repodata in a certain 
@@ -172,12 +201,13 @@ LESSON_YAML_TEMPLATE = '''# PLEASE ADD VALUES FOR ALL KEYS BELOW.
 #
 # dojo/
 #   |---- lessons/
-#           |---- 0001_version_bump/
+#           |---- 001_version_bump/
 #                   |---- dojo_repodata/
-#                           |---- linux-64/
-#                                   |---- repodata.json
-#                           |---- noarch/
-#                                   |---- repodata.json
+#                           |---- <TIMESTAMP>/
+#                                   |---- linux-64/
+#                                           |---- repodata.json
+#                                   |---- noarch/
+#                                           |---- repodata.json
 
 # The lesson title.
 # Example: "How to do a version bump"
@@ -188,6 +218,10 @@ title:
 # "By the end of this lesson, the learner will be able to..."
 objectives: 
   - "EXAMPLE OBJECTIVE"
+
+# Tags.
+# Learners can search for this lesson using tags entered here.
+tags: []
 
 # Package name and version the learner will be attempting to build.
 # Example: numpy-1.16.0

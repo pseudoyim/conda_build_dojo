@@ -7,41 +7,17 @@ a hall or place for immersive learning or meditation.
 *Conda-Build Dojo* guides you through debugging scenarios encountered during package building.
 
 ## TODO
-- Have env var $DOJO_RECIPE point to the recipe path.
-- Every new action is tracked in history.csv
-- Utility to add repodata snapshot to a lesson
+- Have env var $DOJO point to the recipe path.
+- Every new action performed by the learner is tracked in history.csv
 - Utility to remove packages from repodata.json (by filename, namespace, version numbers)
 - When starting a lesson with modified_repodata, update their .condarc (back up the existing with "bak_20210202")
-
+- Search for lessons by a specific tag.
 
 ## Development
 
 To create the dev environment, run:
 ```
 conda env create --file env.yaml
-```
-
-## Directory structure
-```
-conda_build_dojo/
-  |---- dojo/
-  |---- lessons/
-      |---- 0001_version_bump/
-              |---- lesson.yaml (contains lesson metadata, subdirs to use, tags, description, objectives, docker image or VM to use, git commit to checkout, questions and prompts, hints)
-              |---- progress.csv (tracks your actions INSIDE the lesson, along with your notes)
-              |---- repodata/
-                      |---- linux-64/
-                              |---- repodata.json
-                      |---- noarch/
-                              |---- repodata.json
-      |---- 0002_fix_hash/
-      |---- 0003_failing_test/
-      |---- 0004_missing_dependencies/
-  |---- training_feedstocks/
-  |---- curriculum.yaml
-  |---- env.yaml
-  |---- history.csv (tracks your actions AMONG lessons)
-  |---- README.md
 ```
 
 ## Design

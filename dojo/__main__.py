@@ -1,6 +1,6 @@
 import argparse
 import sys
-from dojo.utils import show_history, show_lessons, prune_repodata
+from dojo.utils import search_tag, show_history, show_lessons, prune_repodata
 from dojo.lesson import start, stop, step_previous, step_current, \
     step_next, step_jump, step_add_note, create_lesson
 
@@ -18,18 +18,29 @@ def main():
 
     subparsers = p.add_subparsers(dest='subcommand')
 
-    # Subcommand: history
-    help_msg_history = '''Shows which lessons you've started and completed.'''
-    subcmd_history = subparsers.add_parser('history', help=help_msg_history)
 
     # Subcommand: lessons
-    help_msg_lessons = '''Shows all available lessons (for current platform).'''
+    help_msg_lessons = '''View all available lessons (for current platform).'''
     subcmd_lessons = subparsers.add_parser('lessons', help=help_msg_lessons)
     subcmd_lessons.add_argument(
         '--all',
         help='Show all lessons for all platforms.',
         action='store_true',
         )
+
+    # Subcommand: search
+    help_msg_search = '''Search for lessons based on a tag.'''
+    subcmd_search = subparsers.add_parser('search', help=help_msg_search)
+    subcmd_search.add_argument(
+        '-t',
+        '--tag',
+        help='Search lessons for this tag.',
+        )
+
+    # Subcommand: history
+    help_msg_history = '''View which lessons you've started and completed.'''
+    subcmd_history = subparsers.add_parser('history', help=help_msg_history)
+
 
     # Subcommand: start
     help_msg_start = '''Start a lesson.'''
@@ -50,6 +61,7 @@ def main():
         '-v',
         '--verbose',
         help='Include all info about the current lesson.',
+        action='store_true',
         )
 
     # Subcommand: current
@@ -59,6 +71,7 @@ def main():
         '-v',
         '--verbose',
         help='Include all info about the current lesson.',
+        action='store_true',
         )
 
     # Subcommand: next
@@ -68,6 +81,7 @@ def main():
         '-v',
         '--verbose',
         help='Include all info about the current lesson.',
+        action='store_true',
         )
 
     # Subcommand: jump
@@ -81,6 +95,7 @@ def main():
         '-v',
         '--verbose',
         help='Include all info about the current lesson.',
+        action='store_true',
         )
 
     # Subcommand: add_note
@@ -88,8 +103,8 @@ def main():
     subcmd_add_note = subparsers.add_parser('a', help=help_msg_add_note)
 
     # Subcommand: create_lesson
-    # (This command is not listed in --help)
-    subcmd_create_lesson = subparsers.add_parser('create_lesson', help=argparse.SUPPRESS)
+    help_msg_create_lesson = '''Create a new lesson.'''
+    subcmd_create_lesson = subparsers.add_parser('create_lesson', help=help_msg_create_lesson)
     subcmd_create_lesson.add_argument(
         '--name',
         help='Short name of the lesson (use underscores instead of spaces). For example: "creating_a_patch".',
@@ -105,18 +120,22 @@ def main():
         )  
 
     # Subcommand: prune_repodata
-    # (This command is not listed in --help)
-    subcmd_prune_repodata = subparsers.add_parser('prune_repodata', help=argparse.SUPPRESS)
+    help_msg_prune_repodata = '''Prune/remove packages from repodata.json files for a lesson.'''
+    subcmd_prune_repodata = subparsers.add_parser('prune_repodata', help=help_msg_prune_repodata)
 
     args = p.parse_args()
 
-    if args.subcommand == 'history':
-        # run history
-        show_history()
-
-    elif args.subcommand == 'lessons':
+    if args.subcommand == 'lessons':
         # run lessons
         show_lessons()
+
+    elif args.subcommand == 'search':
+        # run search
+        search_tag()
+
+    elif args.subcommand == 'history':
+        # run history
+        show_history()
 
     elif args.subcommand == 'start':
         start(args.lesson_name)

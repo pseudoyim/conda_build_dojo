@@ -4,12 +4,13 @@
 #
 # dojo/
 #   |---- lessons/
-#           |---- 0001_version_bump/
+#           |---- 001_version_bump/
 #                   |---- dojo_repodata/
-#                           |---- linux-64/
-#                                   |---- repodata.json
-#                           |---- noarch/
-#                                   |---- repodata.json
+#                           |---- <TIMESTAMP>/
+#                                   |---- linux-64/
+#                                           |---- repodata.json
+#                                   |---- noarch/
+#                                           |---- repodata.json
 
 # The lesson title.
 title: "How to do a version bump"
@@ -18,7 +19,12 @@ title: "How to do a version bump"
 # Each objective should help complete this sentence: 
 # "By the end of this lesson, the learner will be able to..."
 objectives: 
-  - "Build an updated version of tqdm."
+  - Build an updated version of tqdm.
+  - Run the upload script on Zeus.
+
+# Tags.
+# Learners can search for this lesson using tags entered here.
+tags: ['version', 'version bump', 'update', 'update versions', 'tqdm', 'upload to Zeus']
 
 # Package name and version the learner will be attempting to build.
 target_package: tqdm-4.56.0

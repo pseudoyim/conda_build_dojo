@@ -44,7 +44,7 @@ def create_lesson(new_lesson_name, target_platform, repodata_snapshot=False):
     '''
     subdirs = ['noarch', target_platform]
 
-    # Create lesson directory (increments from last lesson's number).
+    # Create lesson directory (increments from the last lesson's number).
     last_lesson_number = get_last_lesson_number()
     new_lesson_number_str = str(last_lesson_number + 1)
     new_lesson_number_str = new_lesson_number_str.zfill(3)
@@ -88,12 +88,13 @@ def display_prompt(lesson_name, lesson_specs, step_index, verbose=False):
     prompt_location = f'{step_index + 1} of {total_num_prompts}'
     prompt = lesson_specs['prompts'][step_index]
 
-    print('\n=============== CONDA-BUILD DOJO ===============')
+    print('\n=============================== CONDA-BUILD DOJO ===============================')
     if details:
         print(details)
-    print(f'\n(Step {prompt_location}) {prompt}')
-    print('\n================================================')
-    print(f'OPTIONS: dojo (p)revious; (c)urrent; (n)ext; (j)ump; (a)dd note; (stop) lesson.')
+    print(f'\nStep {prompt_location}')
+    print(f'\n{prompt}')
+    print('\n================================================================================')
+    print(f'OPTIONS: dojo (p)revious; (c)urrent; (n)ext; (j)ump; (a)dd note; (stop) lesson.\n')
 
 
 def get_last_lesson_number():
@@ -122,12 +123,13 @@ def load_lesson_specs(lesson_name):
 
 
 def start(lesson_name):
+
     # Check whether a progress.csv already exists (which would mean
     # they've started this lesson before). 
     # If so, ask whether they want to resume or start over.
     if os.path.exists(os.path.join(LESSONS_DIR, lesson_name, 'progress.csv')):
         while True:
-            user_response = str(input(f'You previously started "{lesson_name}". Do you wish to (c)ontinue where you left off, or (s)tart over? '))
+            user_response = str(input(f'You previously started "{lesson_name}". \nDo you wish to (c)ontinue where you left off, or (s)tart over? '))
             if user_response.lower() not in ['c', 's']:
                 print('Sorry, I did not understand.')
             else:
@@ -144,6 +146,7 @@ def start(lesson_name):
         lesson_specs = load_lesson_specs(lesson_name)
         feedstock_url = lesson_specs['feedstock_url']
         commit = lesson_specs['commit']
+        step_index = 0
 
         # Get feedstock.
         clone_target_path = clone_checkout_feedstock(feedstock_url, commit)
@@ -161,17 +164,15 @@ def start(lesson_name):
         # Create lesson progress.csv.
         create_lesson_progress(lesson_name)
 
-        # Start at index 0.
-        step_index = 0
-
         display_prompt(lesson_name, lesson_specs, step_index, verbose=True)
 
 
 def step_previous(verbose=False):
-    # Read history.csv to lookup which lesson is active,
-    
-    # Go to that lesson's progress.csv to lookup
-    # the current step they're on. 
+    # Get current lesson_name.
+    # Check history for last lesson_name that's active.
+
+    # Go to that lesson's progress.csv to get the current step.
+    lesson_specs = load_lesson_specs(current_lesson_name)
     
     # Then go to previous step.
 
@@ -181,7 +182,9 @@ def step_previous(verbose=False):
 
 def step_current(verbose=False):
     # If verbose, show all info and previously completed steps too.
-    last_move = get_latest()
+    lesson_name, step_index = get_latest()
+    lesson_specs = load_lesson_specs(lesson_name)
+    display_prompt(lesson_name, lesson_specs, step_index, verbose=verbose)
 
 
 def step_next(verbose=False):
@@ -202,6 +205,10 @@ def step_add_note():
 def stop():
     # Update history.csv.
     update_history(lesson_name, 'stop')
+
+    # Unset env vars (DOJO, DOJO_CURRENT_LESSON)
+
+    # If lesson_spec had modified_repodata=True, revert .condarc file to point to defaults.
 
 
 
