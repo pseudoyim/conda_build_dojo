@@ -4,14 +4,14 @@
 *noun*<br>
 a hall or place for immersive learning or meditation.
 
-*Conda-Build Dojo* guides you through debugging scenarios encountered during package building.
+*Conda-Build Dojo* walks you through lessons that re-create debugging scenarios encountered during package building.
 
 ## TODO
-- Have env var $DOJO point to the recipe path.
-- Every new action performed by the learner is tracked in history.csv
+- Show all lessons (in curriculum.yaml)
+- Show my history.
 - Utility to remove packages from repodata.json (by filename, namespace, version numbers)
 - When starting a lesson with modified_repodata, update their .condarc (back up the existing with "bak_20210202")
-- Search for lessons by a specific tag.
+- Modify repodata (start, stop)
 
 ## Development
 

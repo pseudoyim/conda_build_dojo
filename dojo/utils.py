@@ -10,6 +10,7 @@ import sys
 import yaml
 from datetime import datetime
 from dojo import ROOT_DIR, LESSONS_DIR
+from tabulate import tabulate
 
 try:
     from cStringIO import StringIO
@@ -39,7 +40,11 @@ def configure_condarc(lesson_name):
 
 
 def get_latest():
-    
+    '''
+    Looks at the last row in history.csv to see if there's an active lesson.
+    If there is, return that lesson's name and current step index.
+    Else, tell the user they need to start a lesson.
+    '''
     df_history = pd.read_csv(f'{ROOT_DIR}/history.csv', index_col=False)
 
     if len(df_history.index) == 0:
@@ -114,32 +119,67 @@ def prune_repodata():
     pass
 
 
-def search_tag(tag):
-    pass
+##############
+#    TAGS    #
+##############
+
+def search_tag(search_tag):
+    '''
+    Searches each lesson's lesson.yaml to see if they match
+    for the given tag.
+    '''
+    # Final list of lists that looks like:
+    # Title   LessonName    Objectives    MatchingTag    
+    results = []
+
+    # Load every lesson.yaml
+    from glob import glob
+    all_lesson_paths = glob(os.path.join(LESSONS_DIR,'*'))
+    for lesson_path in all_lesson_paths:
+        lesson_name = lesson_path.split('/')[-1]
+        lesson_specs = load_lesson_specs(lesson_name)
+        tags = lesson_specs['tags']
+
+        # Search for tag.
+        for tag in tags:
+            if search_tag.lower() in tag.lower():
+                title = lesson_specs['title']
+                objectives = lesson_specs['objectives']
+                match = [title, lesson_name, objectives, tag]
+                results.append(match)
+
+    print(f'\nSearch results for: {search_tag}')
+    # TODO: When `tabulate` project releases fix for v0.8.9 (with maxcolwidths keyword arg), use it to set max col widths.
+    # print(tabulate(results, headers=['Title', 'Lesson Name', 'Objectives', 'Matching Tag'], tablefmt="grid", maxcolwidth=[None, None, 24, None]))
+    print(tabulate(results, headers=['Title', 'Lesson Name', 'Objectives', 'Matching Tag'], tablefmt="grid",))
 
 
 #################
 #    HISTORY    #
 #################
 
-def get_history():
+def load_history():
     return pd.read_csv(os.path.join(ROOT_DIR, 'history.csv'), index_col=False)
 
 
 def show_history(all_history=False):
     # Load conda_build_dojo/history.csv
 
-    # Display table of last ten actions.
+    # Show: Lesson   Last Action   Timestamp
 
     pass
 
 
 def update_history(lesson_name, action):
-    df_history = get_history()
-
+    '''
+    Adds a row to history.csv, recording the lesson_name
+    and whether it was started, stopped, or completed 
+    (and boolean of whether that lesson is active or not).
+    '''
+    df_history = load_history()
     ts = get_timestamp_for_action()
 
-    if action == 'stop':
+    if action in ['completed', 'stop']:
         active = False
     else:
         active = True
@@ -157,11 +197,27 @@ def update_history(lesson_name, action):
 #    LESSONS    #
 #################
 
+def load_lesson_specs(lesson_name):
+    '''
+    Gets specs from the lesson.yaml
+    '''
+    lesson_yaml_path = os.path.join(LESSONS_DIR, lesson_name, 'lesson.yaml')
+
+    try:
+        with open(lesson_yaml_path, mode='r') as lesson_specs:
+            import yaml    # i.e. pyyaml
+            return yaml.safe_load(lesson_specs)
+    except FileNotFoundError:
+        print(f'ERROR: lesson.yaml for {lesson_name} not found.')
+        sys.exit(1)
+
+
 def show_lessons(all_platforms=False):
     # Load conda_build_dojo/curriculum.yaml
 
-    # Display tree of lessons available, (title, lesson_name, objectives, target_package).
-
+    # Display:
+    # topic, title, lesson_name, target_platform
+    print('TODO: Show lessons here (from curriculum.yaml).')
     pass
 
 
@@ -172,7 +228,17 @@ def create_lesson_progress(lesson_name):
     df.to_csv(f'{LESSONS_DIR}/{lesson_name}/progress.csv', index=False)
 
 
+def get_all_lesson_progress(lesson_name):
+    '''
+    Returns all progress.csv as a df.
+    '''
+    return pd.read_csv(f'{LESSONS_DIR}/{lesson_name}/progress.csv', index_col=False)    
+
+
 def get_lesson_progress(lesson_name):
+    '''
+    Returns only the last row of progress.csv as a list.
+    '''
     df = pd.read_csv(f'{LESSONS_DIR}/{lesson_name}/progress.csv', index_col=False)
     # Return the last row.
     return df.values[-1].tolist()
@@ -191,7 +257,6 @@ def update_lesson_progress(lesson_name, step_index, note=''):
 ###################
 #    TEMPLATES    #
 ###################
-
 
 LESSON_YAML_TEMPLATE = '''# PLEASE ADD VALUES FOR ALL KEYS BELOW.
 

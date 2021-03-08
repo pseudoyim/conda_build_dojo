@@ -20,7 +20,10 @@ title: "How to do a version bump"
 # "By the end of this lesson, the learner will be able to..."
 objectives: 
   - Build an updated version of tqdm.
-  - Run the upload script on Zeus.
+  # - Run the upload script on Zeus.
+  # - Here's another objective.
+  # - And another objective.
+  # - Finally the last objective.
 
 # Tags.
 # Learners can search for this lesson using tags entered here.
@@ -54,3 +57,9 @@ modified_repodata: False
 prompts:
   - Open the meta.yaml and find the current version and sha256 hash.
   - Go to https://pypi.org/project/tqdm/4.58.0/#files and get the latest version number and sha256 hash.
+  - STEP 3
+  - STEP 4
+  - STEP 5
+  - STEP 6
+  - STEP 7
+  - STEP 8

@@ -18,7 +18,6 @@ def main():
 
     subparsers = p.add_subparsers(dest='subcommand')
 
-
     # Subcommand: lessons
     help_msg_lessons = '''View all available lessons (for current platform).'''
     subcmd_lessons = subparsers.add_parser('lessons', help=help_msg_lessons)
@@ -32,8 +31,7 @@ def main():
     help_msg_search = '''Search for lessons based on a tag.'''
     subcmd_search = subparsers.add_parser('search', help=help_msg_search)
     subcmd_search.add_argument(
-        '-t',
-        '--tag',
+        'tag',
         help='Search lessons for this tag.',
         )
 
@@ -126,43 +124,34 @@ def main():
     args = p.parse_args()
 
     if args.subcommand == 'lessons':
-        # run lessons
         show_lessons()
 
     elif args.subcommand == 'search':
-        # run search
-        search_tag()
+        search_tag(args.tag)
 
     elif args.subcommand == 'history':
-        # run history
         show_history()
 
     elif args.subcommand == 'start':
         start(args.lesson_name)
 
     elif args.subcommand == 'p':
-        # run (p)revious step
         step_previous(verbose=args.verbose)
 
     elif args.subcommand == 'c':
-        # run (c)urrent step
         step_current(verbose=args.verbose)
 
     elif args.subcommand == 'n':
-        # run (n)ext step
         step_next(verbose=args.verbose)
 
     elif args.subcommand == 'j':
-        # run jump
         step_jump(args.step_number, verbose=args.verbose)
 
     elif args.subcommand == 'a':
-        # run (a)dd note to current step
-        pass
+        step_add_note()
 
     elif args.subcommand == 'stop':
-        # run stop lesson
-        pass
+        stop()
 
     elif args.subcommand == 'create_lesson':
         # run create_lesson
