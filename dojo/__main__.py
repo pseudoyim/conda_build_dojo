@@ -154,7 +154,7 @@ def main():
         stop()
 
     elif args.subcommand == 'create_lesson':
-        # run create_lesson
+        # Validate input.
         if ' ' in args.name:
             print(f'Invalid lesson name: "{args.name}". Please use underscores instead of spaces.')
             sys.exit(1)
@@ -167,6 +167,7 @@ def main():
         # --filenames, -f
         # --namespaces, -n
         # --versions, -v
+        print('TODO: Utility to prune repodata.json files.')
         pass
 
     else:
