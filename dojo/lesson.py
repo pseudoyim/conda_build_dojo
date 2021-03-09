@@ -132,53 +132,59 @@ def get_repo_name(feedstock_url):
     return feedstock_url.split('/')[-1].split('.git')[0]
 
 
+def setup_feedstock_and_condarc(lesson_name):
+    lesson_specs = load_lesson_specs(lesson_name)
+    feedstock_url = lesson_specs['feedstock_url']
+    commit = lesson_specs['commit']
+
+    # Clone feedstock and checkout to specifiec commit.
+    clone_checkout_feedstock(feedstock_url, commit)
+
+    # If modified_repodata == True,
+    # edit the .condarc to point to local repodata.
+    if lesson_specs['modified_repodata']:
+        # Alter .condarc
+        print('Modify .condarc (NOT YET IMPLEMENTED)')
+        pass
+
+
 def start(lesson_name):
     '''
     Starts a new lesson by setting up the feedstock and condarc.
     Also checks if a user already started the specified lesson 
     and handles accordingly.
     '''
+    lesson_specs = load_lesson_specs(lesson_name)
+    feedstock_url = lesson_specs['feedstock_url']
+    commit = lesson_specs['commit']
+
     # Check whether a progress.csv already exists (which would mean
     # they've started this lesson before). 
     # If so, ask whether they want to resume or start over.
     if os.path.exists(os.path.join(LESSONS_DIR, lesson_name, 'progress.csv')):
         while True:
-            user_response = str(input(f'You previously started "{lesson_name}". \nDo you wish to (c)ontinue where you left off, or (s)tart over? '))
+            user_response = str(input(f'You previously started "{lesson_name}". \nDo you wish to (r)esume, (s)tart over, or (c)ancel? '))
             if user_response.lower() not in ['c', 's']:
                 print('Sorry, I did not understand.')
             else:
                 break
-        if user_response.lower() == 'c':
+        if user_response.lower() == 'r':
+            setup_feedstock_and_condarc(lesson_name)
             update_history(lesson_name, 'resume')
             step_current(verbose=True)
         elif user_response.lower() == 's':
+            setup_feedstock_and_condarc(lesson_name)
             update_history(lesson_name, 'start over')
             update_lesson_progress(lesson_name, 0)
             step_current(verbose=True)
+        elif user_response.lower() == 'c':
+            sys.exit(0)
 
     else:
-        lesson_specs = load_lesson_specs(lesson_name)
-        feedstock_url = lesson_specs['feedstock_url']
-        commit = lesson_specs['commit']
-        step_index = 0
-
-        # Get feedstock.
-        clone_target_path = clone_checkout_feedstock(feedstock_url, commit)
-
-        # If modified_repodata == True, 
-        # edit the .condarc to point to local repodata.
-        if lesson_specs['modified_repodata']:
-            # Alter .condarc
-            print('Modify .condarc (NOT YET IMPLEMENTED)')
-            pass
-
-        # Update history.csv.
+        setup_feedstock_and_condarc(lesson_name)
         update_history(lesson_name, 'start')
-
-        # Create lesson progress.csv.
         create_lesson_progress(lesson_name)
-
-        display_prompt(lesson_name, lesson_specs, step_index, verbose=True)
+        display_prompt(lesson_name, lesson_specs, 0, verbose=True)
 
 
 def step_previous(verbose=False):
