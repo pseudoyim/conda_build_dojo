@@ -20,14 +20,10 @@ title: "How to do a version bump"
 # "By the end of this lesson, the learner will be able to..."
 objectives: 
   - Build an updated version of tqdm.
-  # - Run the upload script on Zeus.
-  # - Here's another objective.
-  # - And another objective.
-  # - Finally the last objective.
 
 # Tags.
 # Learners can search for this lesson using tags entered here.
-tags: ['version', 'version bump', 'update', 'update versions', 'tqdm', 'upload to Zeus']
+tags: ['version', 'version bump', 'update', 'update versions', 'tqdm']
 
 # Package name and version the learner will be attempting to build.
 target_package: tqdm-4.56.0
@@ -41,7 +37,7 @@ feedstock_url: https://github.com/AnacondaRecipes/tqdm-feedstock.git
 # The specific commit hash from the feedstock repo that should be initially 
 # checked out. This acts as the starting point for the learner, a "snapshot"
 # in time from which they will complete their lesson objectives.
-commit: 92b0bf2c6ff63caee6f521a6bc85af2d2395c0bf
+commit: b3b1609510cc7d2c0256abd5c1266fde1ee046d5
 
 # Indicates whether this lesson requires a modified repodata "snapshot".
 # In other words, a version of defaults that's been edited to recreate the 
@@ -55,11 +51,32 @@ modified_repodata: False
 # BONUS: Provide hints to the learner (just tell them the hint will be 
 # revealed in the next step if they want it).
 prompts:
-  - Open the meta.yaml and find the current version and sha256 hash.
-  - Go to https://pypi.org/project/tqdm/4.58.0/#files and get the latest version number and sha256 hash.
-  - STEP 3
-  - STEP 4
-  - STEP 5
-  - STEP 6
-  - STEP 7
-  - STEP 8
+  - |
+    Open this file: training_feedstocks/tqdm-feedstock/recipe/meta.yaml
+    Find the current version and sha256 hash value.
+  - Go to https://pypi.org/, search for "tqdm", and go to the project's page.
+  - Click on "Release History". Find the next version after 4.55.2, and click on it.
+  - You should now be on the page for "tqdm 4.56.0". Click on "Download files".
+  - |
+    We build conda pacakges from source files (e.g. .tar.gz, .xz, or .zip). 
+    On the row for "tqdm-4.56.0.tar.gz", click on the "View" button.
+    Click the "Copy" button on the row for "SHA256".
+  - |
+    Go back to the meta.yaml. 
+    Update the version number to "4.56.0", and paste in the new sha256 value.
+  - |
+    Build the package: 
+
+      conda-build <PATH TO RECIPE>
+  - |
+    You should get an error like this during the test step of the build:
+
+
+    ___________________ ERROR collecting tests/tests_asyncio.py ____________________
+    Direct construction of Function has been deprecated, please use Function.from_parent.
+    See https://docs.pytest.org/en/stable/deprecations.html#node-construction-changed-to-node-from-parent for more details.
+
+
+    You can ignore this for now. Just re-run the command with the "--no-test" argument.
+
+        conda-build <PATH TO RECIPE> --no-test
