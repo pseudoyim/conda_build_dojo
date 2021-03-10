@@ -37,7 +37,7 @@ feedstock_url: https://github.com/AnacondaRecipes/tqdm-feedstock.git
 # The specific commit hash from the feedstock repo that should be initially 
 # checked out. This acts as the starting point for the learner, a "snapshot"
 # in time from which they will complete their lesson objectives.
-commit: b3b1609510cc7d2c0256abd5c1266fde1ee046d5
+commit: 92b0bf2c6ff63caee6f521a6bc85af2d2395c0bf
 
 # Indicates whether this lesson requires a modified repodata "snapshot".
 # In other words, a version of defaults that's been edited to recreate the 
