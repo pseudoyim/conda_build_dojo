@@ -75,12 +75,12 @@ def display_prompt(lesson_name, lesson_specs, step_index, verbose=False):
     Also shows any notes entered for the step.
     '''
     if verbose:
-        details = 'Objectives:'
+        details = '  Objectives:'
         for obj in lesson_specs['objectives']:
-            details += f'\n  - {obj}'
+            details += f'\n    - {obj}'
         repo_name = get_repo_name(lesson_specs['feedstock_url'])
         recipe_path = os.path.join(TRAINING_FEEDSTOCKS_DIR, repo_name, 'recipe')
-        details += f'\nRecipe path: {recipe_path}'
+        details += f'\n  Recipe path: {recipe_path}'
     else:
         details = None
 
@@ -95,24 +95,26 @@ def display_prompt(lesson_name, lesson_specs, step_index, verbose=False):
     rows_with_notes = df_rows_with_notes.values.tolist()
     
     if rows_with_notes:
-        notes = '\nMy notes:'
+        notes = '\n  My notes:'
         for note in rows_with_notes:
             date = note[1].split(' ')[0]
             content = note[3]
-            notes += f'\n  - ({date}) {content}'
+            notes += f'\n    - ({date}) {content}'
     else: 
         notes = None
 
     print('\n=============================== CONDA-BUILD DOJO ===============================')
-    print(f'\nLesson: "{lesson_specs["title"]}"')
+    print('||                                                                            ||')
+    print(f'\n  Lesson: "{lesson_specs["title"]}"')
     if details:
         print(details)
-    print(f'\nStep {prompt_location}')
+    print(f'\n  Step {prompt_location}')
     print(f'\n{prompt}')
     if notes:
         print(notes)
-    print('\n================================================================================')
-    print(f'OPTIONS: dojo (p)revious; (c)urrent; (n)ext; (j)ump; (a)dd note; (stop) lesson.\n')
+    print('\n||                                                                            ||')
+    print('================================================================================')
+    print(f' OPTIONS: dojo (p)revious; (c)urrent; (n)ext; (j)ump; (a)dd note; (stop) lesson.\n')
 
 
 def get_last_lesson_number():

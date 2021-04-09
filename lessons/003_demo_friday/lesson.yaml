@@ -6,7 +6,7 @@
 #
 # dojo/
 #   |---- lessons/
-#           |---- 0001_version_bump/
+#           |---- 001_version_bump/
 #                   |---- dojo_repodata/
 #                           |---- <TIMESTAMP>/
 #                                   |---- linux-64/

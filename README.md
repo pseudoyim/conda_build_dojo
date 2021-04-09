@@ -4,21 +4,35 @@
 *noun*<br>
 a hall or place for immersive learning or meditation.
 
-*Conda-Build Dojo* walks you through lessons that re-create debugging scenarios encountered during package building.
+*Conda-Build Dojo* walks you through lessons that re-create scenarios encountered during package building.
 
 ## TODO
+
 - Show all lessons (in curriculum.yaml)
 - Show my history.
-- Complete setup.py for dev installation.
+
+- Patch conda to make it download packages from defaults on Anaconda.org even if the .condarc points to a local file:/// repodata.json.
 - Utility to remove packages from repodata.json (by filename, namespace, version numbers)
 - When starting a lesson with modified_repodata, update their .condarc (back up the existing with "bak_20210202")
 - Modify repodata (start, stop)
 
-## Development
+## Installation
 
-To create the dev environment, run:
+From this repo's root directory:
+
+1. Create the conda environment.
 ```
 conda env create --file env.yaml
+```
+
+1. Activate the conda environment.
+```
+conda activate dojo_dev
+```
+
+1. Install this repo in dev mode.
+```
+pip install -e .
 ```
 
 ## Design
@@ -50,8 +64,11 @@ conda env create --file env.yaml
 
 Run:
 ```
-dojo create_lesson --repodata
+dojo create_lesson --name <LESSON_NAME> [--repodata-snapshot --target-platform <TARGET_PLATFORM>]
 ```
+
+
+
 
 To prune/edit repodata:
 ```

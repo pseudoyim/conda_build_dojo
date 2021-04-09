@@ -115,8 +115,36 @@ def get_timestamp_for_action():
     return now.strftime(ts_format) + ' UTC'
 
 
-def prune_repodata():
+def prune_repodata(lesson_name, package_to_build, prune_list=None):
+    '''
+    Removes all packages from a repodata snapshot that are not
+    relevant to building the "package_to_build" (all build, host, 
+    run, and test dependencies). This makes the repodata.json more 
+    lightweight and easier to work with.
+
+    Additional packages that you want to remove can be specified
+    in "prune_list". For example, pandas needs numpy, but if one
+    of the lesson objectives is to build all of pandas' dependencies,
+    then you can add numpy to the "prune_list" to remove it from the 
+    repodata.json so that it raises a "DependencyNotFound" error when
+    trying to build pandas. Thus, this will requires the learner
+    to build numpy on their own.
+    '''
+
+    # Run `conda render` on the feedstock and parse the fully solved 
+    # dependency list of packages.
+
+    # Iterate through repodata.json; if in the solved list, then append
+    # to "pruned" repodata.json (Make sure to capture both 
+    # .tar.bz2 and .conda files).
+
+    # Iterate through "pruned" repodata.json; if in prune_list, remove
+    # it from "final" repodata.json. (Make sure to remove both 
+    # .tar.bz2 and .conda files).
+
+    print('TODO: prune_repodata functionality.')
     pass
+
 
 
 ##############
@@ -163,6 +191,7 @@ def load_history():
 
 
 def show_history(all_history=False):
+    print('TODO: Show history here.')
     # Load conda_build_dojo/history.csv
 
     # Show: Lesson   Last Action   Timestamp
