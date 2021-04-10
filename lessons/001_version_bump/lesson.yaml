@@ -1,7 +1,7 @@
 # IMPORTANT: If your lesson requires a snapshot of a channel(s) in a certain 
 # state (e.g. missing some dependencies for python-3.9), then please make
 # sure to add the URLs for the necessary packages in a `dojo_channels_pkgs.txt`
-# file under the lesson directory. For example:
+# file under the lesson directory. (See README for more details.) For example:
 #
 # dojo/
 #   |---- lessons/
@@ -40,11 +40,6 @@ feedstock_url: https://github.com/AnacondaRecipes/tqdm-feedstock.git
 # in time from which they will complete their lesson objectives.
 commit: 92b0bf2c6ff63caee6f521a6bc85af2d2395c0bf
 
-# Indicates whether this lesson requires a modified repodata "snapshot".
-# In other words, a version of defaults that's been edited to recreate the 
-# starting point for the lesson.
-modified_repodata: False
-
 # Lesson prompts (or steps).
 # List the propmpts/steps the learner should go through.
 # You can also pose questions and answers (for example, one prompt is 
@@ -68,4 +63,4 @@ prompts:
   - |
     Build the package: 
 
-      conda-build <PATH TO RECIPE>
+      conda build training_feedstocks/tqdm-feedstock/recipe

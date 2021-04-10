@@ -323,7 +323,7 @@ LESSON_YAML_TEMPLATE = '''# PLEASE ADD VALUES FOR ALL KEYS BELOW.
 # IMPORTANT: If your lesson requires a snapshot of a channel(s) in a certain 
 # state (e.g. missing some dependencies for python-3.9), then please make
 # sure to add the URLs for the necessary packages in a `dojo_channels_pkgs.txt`
-# file under the lesson directory. For example:
+# file under the lesson directory. (See README for more details.) For example:
 #
 # dojo/
 #   |---- lessons/

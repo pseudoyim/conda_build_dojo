@@ -58,3 +58,12 @@ timestamp,lesson_name,action,active
 2021-04-10 15:50:46 UTC,002_test,start,True
 2021-04-10 15:55:59 UTC,002_missing_deps,start,True
 2021-04-10 15:59:08 UTC,002_unsatisfiable_deps,start,True
+2021-04-10 17:15:44 UTC,002_unsatisfiable_deps,completed,False
+2021-04-10 17:20:21 UTC,002_unsatisfiable_deps,start over,True
+2021-04-10 17:26:30 UTC,002_unsatisfiable_deps,completed,False
+2021-04-10 17:27:33 UTC,002_unsatisfiable_deps,start over,True
+2021-04-10 17:42:59 UTC,002_unsatisfiable_deps,completed,False
+2021-04-10 17:48:35 UTC,002_unsatisfiable_deps,start over,True
+2021-04-10 17:48:50 UTC,002_unsatisfiable_deps,completed,False
+2021-04-10 17:49:32 UTC,002_unsatisfiable_deps,start over,True
+2021-04-10 17:50:14 UTC,002_unsatisfiable_deps,completed,False

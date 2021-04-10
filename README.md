@@ -10,11 +10,7 @@ a hall or place for immersive learning or meditation.
 
 - Show all lessons (in curriculum.yaml)
 - Show my history.
-- Command to clean all "dojo_channels" directories.
-    - `dojo stop` command should end the lessson and clean up the `dojo_channels` directory for that lessson.
-- Get rid of "modified_repodata" key in lesson.yaml (and associated functions).
 - Add color to the prompt (use colorama).
-
 - Lesons to add:
     - Create a patch (including on GitHub!)
     - Port a patch
@@ -24,29 +20,25 @@ a hall or place for immersive learning or meditation.
 ## Development
 
 1. Clone this repo to your local machine.
-
-1. Spin up the `c3i_linux-64` docker image, mounted to a path that can reach your clone.
-
+1. Spin up the `c3i_linux-64` docker image, mounted to a path that can reach your clone of the repo and `aggregate`.
 1. From this repo's root directory, create the conda environment.
 ```
 conda env create --file env.yaml
 ```
-
 1. Activate the conda environment.
 ```
 conda activate dojo_dev
 ```
-
 1. Install this repo in dev mode.
 ```
 pip install -e .
 ```
 
 ## Design
-- Snapshots in time:
-    - Packages in Repo: repodata.json
-    - Recipes in AnacondaRecipes: commits
 - The learner makes their own fork of this repo and clones it on target platforms.
+- Snapshots in time:
+    - Packages in Repo: Download needed packages into local directory and run "conda index" to pretend they're channels.
+    - Recipes in AnacondaRecipes: commits
 - Run `dojo` and follow objectives and steps to complete lessons.
 
 ## Platforms
@@ -61,13 +53,13 @@ pip install -e .
 
 ### OSX
 
-1. Use <Concourse training node?>
+(TBD)
 
 ### Windows
 
-1. Use <Concourse training node?>
+(TBD)
 
-## Create a lesson
+## How to create a lesson
 
 1. Run:
 ```

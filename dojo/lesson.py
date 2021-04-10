@@ -13,6 +13,15 @@ from dojo.utils import add_lesson_yaml, download_package, get_latest, \
 from git import Repo
 
 
+def clean_dojo_channels(lesson_name):
+    # If dojo_channels directory exists, delete it.
+    dojo_channels_path = os.path.join(LESSONS_DIR, lesson_name, 'dojo_channels')
+    if os.path.isdir(dojo_channels_path):
+        print('Removing dojo_channels directory...')
+        shutil.rmtree(dojo_channels_path)
+        print('...success!')
+
+
 def clone_checkout_feedstock(feedstock_url, commit):
     '''
     Clones the lesson's feedstock and checks
@@ -284,8 +293,12 @@ def step_next(verbose=False):
         lesson_title = lesson_specs['title']
         update_history(lesson_name, 'completed')
         print(f'\n+ + + + Congrats! You have completed "{lesson_title}". + + + +')
-        print('You can review this lesson (and any notes you added) by re-starting the lesson.')
+        print(f'\nYou should now be able to:')
+        for obj in lesson_specs['objectives']:
+            print(f'  - {obj}')
+        print('\nYou can review this lesson (and any notes you added) by re-starting the lesson.')
         print('Otherwise, onward and upward to a new lesson!\n')
+        stop(completed_lesson_name=lesson_name)
         sys.exit(0)
 
     new_step_index = current_step_index + 1
@@ -330,15 +343,16 @@ def step_add_note():
     print('To edit or delete the note, please do so in the csv file itself.')
 
 
-def stop():
+def stop(completed_lesson_name=None):
     '''
-    Stop the lesson.
+    Stop the lesson and clean up its dojo_channels dir (if it exists).
     '''
-    lesson_name, _ = get_latest()
-    
-    # Update history.csv.
-    update_history(lesson_name, 'stop')
+    if completed_lesson_name:
+        clean_dojo_channels(completed_lesson_name)
 
-    # TODO: If lesson_spec had modified_repodata=True, revert .condarc file to point to defaults.
+    else:  # User is stopping the lesson before finishing it.
+        lesson_name, _ = get_latest()
+        update_history(lesson_name, 'stop')
+        clean_dojo_channels(lesson_name)
+        print(f'Stopped lesson: {lesson_name}')
 
-    print(f'Stopped lesson: {lesson_name}')

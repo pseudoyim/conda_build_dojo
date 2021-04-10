@@ -20,7 +20,7 @@ authors:
 # Each objective should help complete this sentence: 
 # "By the end of this lesson, the learner will be able to..."
 objectives: 
-  - Understand the meaning of the "Unsatisfiable Dependencies" error.
+  - Explain the meaning of the "Unsatisfiable Dependencies" error.
   - Figure out which dependency package(s) are causing the error.
 
 # Tags.
@@ -49,12 +49,12 @@ commit: 92b0bf2c6ff63caee6f521a6bc85af2d2395c0bf
 # revealed in the next step if they want it).
 prompts:
   - |
-    Try to build "tqdm":
+    Let's start by trying to build "tqdm":
 
       conda build training_feedstocks/tqdm-feedstock/recipe
 
   - |
-    You should run into this nasty error:
+    You should have run into this nasty error:
 
       conda.exceptions.UnsatisfiableError: The following specifications were found to be incompatible with each other:
 
@@ -137,7 +137,7 @@ prompts:
     (NOTE: Sometimes you'll see several different packages listed in this result. If that's the case, dump 
     the result into a spreadsheet, sort it, and start looking at the package that has the most lines.)
 
-    What's causing "pip" to be uninstallable? Let's see if we can create an environment with just "pip":
+    What's causing "pip" to be unsatisfiable? Let's see if we can create an environment with just "pip":
 
       conda create -n zz_test --dry-run pip
 
@@ -167,7 +167,7 @@ prompts:
   - |
     We can now install "pip", which means we should now have all of our dependencies satisfied to build "tqdm".
 
-    Alrighty, so let's now try to build "tqdm" again.
+    So let's now try to build "tqdm" again:
 
       conda build training_feedstocks/tqdm-feedstock/recipe
 
