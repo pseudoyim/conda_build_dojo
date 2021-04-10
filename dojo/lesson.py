@@ -7,7 +7,7 @@ import shutil
 import sys
 from dojo import ROOT_DIR, LESSONS_DIR, TRAINING_FEEDSTOCKS_DIR
 from dojo.utils import add_lesson_yaml, download_package, get_latest, \
-    update_history, create_lesson_progress, get_all_lesson_progress, 
+    update_history, create_lesson_progress, get_all_lesson_progress, \
     get_lesson_progress, get_timestamp_for_file, \
     load_lesson_specs, update_lesson_progress
 from git import Repo
