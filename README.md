@@ -11,11 +11,18 @@ a hall or place for immersive learning or meditation.
 - Show all lessons (in curriculum.yaml)
 - Show my history.
 - Add color to the prompt (use colorama).
+- Clean up.
 - Lesons to add:
     - Create a patch (including on GitHub!)
     - Port a patch
     - Oniguruma (upstream breaking change)
 
+## Design
+- The learner makes their own fork of this repo and clones it on target platforms.
+- Snapshots in time:
+    - Packages in Repo: Download needed packages into local directory and run "conda index" to pretend they're channels.
+    - Recipes in AnacondaRecipes: commits
+- Run `dojo` and follow objectives and steps to complete lessons.
 
 ## Development
 
@@ -33,13 +40,6 @@ conda activate dojo_dev
 ```
 pip install -e .
 ```
-
-## Design
-- The learner makes their own fork of this repo and clones it on target platforms.
-- Snapshots in time:
-    - Packages in Repo: Download needed packages into local directory and run "conda index" to pretend they're channels.
-    - Recipes in AnacondaRecipes: commits
-- Run `dojo` and follow objectives and steps to complete lessons.
 
 ## Platforms
 

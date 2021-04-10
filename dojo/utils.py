@@ -33,11 +33,11 @@ def add_lesson_yaml(new_lesson_path):
     print('Created new lesson.yaml template.')
 
 
-def configure_condarc(lesson_name):
-    print('Setting up repo snapshot...')
-    print('Updating your .condarc to point to repodata snapshot from <TIMESTAMP> for the following subdirs:')
-    # Point .condarc channel to only point at local 'lesson_name/repodata/ts/' directory.
-    pass
+# def configure_condarc(lesson_name):
+#     print('Setting up repo snapshot...')
+#     print('Updating your .condarc to point to repodata snapshot from <TIMESTAMP> for the following subdirs:')
+#     # Point .condarc channel to only point at local 'lesson_name/repodata/ts/' directory.
+#     pass
 
 
 def download_package(url, destination_path):
@@ -102,36 +102,36 @@ def get_latest():
     return latest_row[0], latest_row[2]
 
 
-def get_repodata_snapshot(lesson_folder_name, subdirs):
-    '''
-    Takes a snapshot of the current repodata.json for defaults.
-    '''
-    print(f'\nCreating repodata snapshots for {subdirs}...')
+# def get_repodata_snapshot(lesson_folder_name, subdirs):
+#     '''
+#     Takes a snapshot of the current repodata.json for defaults.
+#     '''
+#     print(f'\nCreating repodata snapshots for {subdirs}...')
 
-    ts = get_timestamp_for_file()
-    repodata_snapshot_dir = f'{LESSONS_DIR}/{lesson_folder_name}/dojo_repodata/{ts}'
+#     ts = get_timestamp_for_file()
+#     repodata_snapshot_dir = f'{LESSONS_DIR}/{lesson_folder_name}/dojo_repodata/{ts}'
 
-    for subdir in subdirs:
-        # Create sub-directory tree.
-        os.makedirs(f'{repodata_snapshot_dir}/{subdir}')
-        fn = f'{repodata_snapshot_dir}/{subdir}/repodata.json'
-        url = f'https://repo.anaconda.com/pkgs/main/{subdir}/repodata.json'
-        print(f'Fetching {url}...')
-        resp = requests.get(url)
+#     for subdir in subdirs:
+#         # Create sub-directory tree.
+#         os.makedirs(f'{repodata_snapshot_dir}/{subdir}')
+#         fn = f'{repodata_snapshot_dir}/{subdir}/repodata.json'
+#         url = f'https://repo.anaconda.com/pkgs/main/{subdir}/repodata.json'
+#         print(f'Fetching {url}...')
+#         resp = requests.get(url)
 
-        if resp.status_code == 200:
-            response_object = resp.json()
-            print('{} packages.'.format(len(response_object['packages'])))
+#         if resp.status_code == 200:
+#             response_object = resp.json()
+#             print('{} packages.'.format(len(response_object['packages'])))
 
-            # Dump resp to a json file at fn.
-            with open(fn, 'w') as output_file:
-                json.dump(response_object, output_file) 
+#             # Dump resp to a json file at fn.
+#             with open(fn, 'w') as output_file:
+#                 json.dump(response_object, output_file) 
 
-        else:
-            print('Failed to fetch repodata.')
-            sys.exit(1)
+#         else:
+#             print('Failed to fetch repodata.')
+#             sys.exit(1)
 
-    print('...success!')
+#     print('...success!')
 
 
 def get_timestamp_for_file():
@@ -146,35 +146,35 @@ def get_timestamp_for_action():
     return now.strftime(ts_format) + ' UTC'
 
 
-def prune_repodata(lesson_name, package_to_build, prune_list=None):
-    '''
-    Removes all packages from a repodata snapshot that are not
-    relevant to building the "package_to_build" (all build, host, 
-    run, and test dependencies). This makes the repodata.json more 
-    lightweight and easier to work with.
+# def prune_repodata(lesson_name, package_to_build, prune_list=None):
+#     '''
+#     Removes all packages from a repodata snapshot that are not
+#     relevant to building the "package_to_build" (all build, host, 
+#     run, and test dependencies). This makes the repodata.json more 
+#     lightweight and easier to work with.
 
-    Additional packages that you want to remove can be specified
-    in "prune_list". For example, pandas needs numpy, but if one
-    of the lesson objectives is to build all of pandas' dependencies,
-    then you can add numpy to the "prune_list" to remove it from the 
-    repodata.json so that it raises a "DependencyNotFound" error when
-    trying to build pandas. Thus, this will requires the learner
-    to build numpy on their own.
-    '''
+#     Additional packages that you want to remove can be specified
+#     in "prune_list". For example, pandas needs numpy, but if one
+#     of the lesson objectives is to build all of pandas' dependencies,
+#     then you can add numpy to the "prune_list" to remove it from the 
+#     repodata.json so that it raises a "DependencyNotFound" error when
+#     trying to build pandas. Thus, this will requires the learner
+#     to build numpy on their own.
+#     '''
 
-    # Run `conda render` on the feedstock and parse the fully solved 
-    # dependency list of packages.
+#     # Run `conda render` on the feedstock and parse the fully solved 
+#     # dependency list of packages.
 
-    # Iterate through repodata.json; if in the solved list, then append
-    # to "pruned" repodata.json (Make sure to capture both 
-    # .tar.bz2 and .conda files).
+#     # Iterate through repodata.json; if in the solved list, then append
+#     # to "pruned" repodata.json (Make sure to capture both 
+#     # .tar.bz2 and .conda files).
 
-    # Iterate through "pruned" repodata.json; if in prune_list, remove
-    # it from "final" repodata.json. (Make sure to remove both 
-    # .tar.bz2 and .conda files).
+#     # Iterate through "pruned" repodata.json; if in prune_list, remove
+#     # it from "final" repodata.json. (Make sure to remove both 
+#     # .tar.bz2 and .conda files).
 
-    print('TODO: prune_repodata functionality.')
-    pass
+#     print('TODO: prune_repodata functionality.')
+#     pass
 
 
 

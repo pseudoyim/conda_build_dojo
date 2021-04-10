@@ -7,8 +7,8 @@ import shutil
 import sys
 from dojo import ROOT_DIR, LESSONS_DIR, TRAINING_FEEDSTOCKS_DIR
 from dojo.utils import add_lesson_yaml, download_package, get_latest, \
-    get_repodata_snapshot, update_history, create_lesson_progress, \
-    get_all_lesson_progress, get_lesson_progress, get_timestamp_for_file, \
+    update_history, create_lesson_progress, get_all_lesson_progress, 
+    get_lesson_progress, get_timestamp_for_file, \
     load_lesson_specs, update_lesson_progress
 from git import Repo
 
@@ -48,10 +48,9 @@ def clone_checkout_feedstock(feedstock_url, commit):
     return clone_target_path
 
 
-def create_lesson(new_lesson_name, target_platform, repodata_snapshot=False):
+def create_lesson(new_lesson_name, target_platform):
     '''
-    Creates a lesson directory, a lesson.yaml, and (optionally)
-    a snapshot of repodata that can be edited.
+    Creates a lesson directory and a lesson.yaml.
     '''
     subdirs = ['noarch', target_platform]
 
@@ -66,16 +65,9 @@ def create_lesson(new_lesson_name, target_platform, repodata_snapshot=False):
     # Add a lesson.yaml (will need to be edited by the lesson creator).
     add_lesson_yaml(new_lesson_path)
 
-    # Download and save repodata snapshot, if specified.
-    if repodata_snapshot:
-        get_repodata_snapshot(new_lesson_folder, subdirs)
-
     # Show info about where to find the new directory and next steps.
     print(f'New lesson created at: {new_lesson_path}')
     print('In this directory, you will find the "lesson.yaml". Please add your lesson content in this file.')
-    if repodata_snapshot:
-        print(f'You also created a repodata snapshot to use in your lesson (see {new_lesson_path}/dojo_repodata).')
-        print('Please use the "dojo prune_repodata" command to edit this repodata.')
 
 
 def display_prompt(lesson_name, lesson_specs, step_index, verbose=False):

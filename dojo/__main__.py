@@ -1,6 +1,6 @@
 import argparse
 import sys
-from dojo.utils import search_tag, show_history, show_lessons, prune_repodata
+from dojo.utils import search_tag, show_history, show_lessons
 from dojo.lesson import start, stop, step_previous, step_current, \
     step_next, step_jump, step_add_note, create_lesson
 
@@ -107,15 +107,15 @@ def main():
         '--name',
         help='Short name of the lesson (use underscores instead of spaces). For example: "creating_a_patch".',
         )
-    subcmd_create_lesson.add_argument(
-        '--repodata-snapshot',
-        action='store_true',
-        help='Whether to include a snapshot of the current repodata.json file from defaults.',
-        )
-    subcmd_create_lesson.add_argument(
-        '--target-platform',
-        help='(Required for repodata snapshot) Platform the lesson should be run on (options: linux-64, osx-64, and win-64).',
-        )  
+    # subcmd_create_lesson.add_argument(
+    #     '--repodata-snapshot',
+    #     action='store_true',
+    #     help='Whether to include a snapshot of the current repodata.json file from defaults.',
+    #     )
+    # subcmd_create_lesson.add_argument(
+    #     '--target-platform',
+    #     help='(Required for repodata snapshot) Platform the lesson should be run on (options: linux-64, osx-64, and win-64).',
+    #     )  
 
     # # Subcommand: prune_repodata
     # help_msg_prune_repodata = '''Prune/remove packages from repodata.json files for a lesson.'''
@@ -158,7 +158,7 @@ def main():
         if ' ' in args.name:
             print(f'Invalid lesson name: "{args.name}". Please use underscores instead of spaces.')
             sys.exit(1)
-        create_lesson(args.name, args.target_platform, repodata_snapshot=args.repodata_snapshot)
+        create_lesson(args.name, args.target_platform)
 
     # elif args.subcommand == 'prune_repodata':
     #     # run prune_repodata
