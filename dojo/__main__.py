@@ -117,9 +117,9 @@ def main():
         help='(Required for repodata snapshot) Platform the lesson should be run on (options: linux-64, osx-64, and win-64).',
         )  
 
-    # Subcommand: prune_repodata
-    help_msg_prune_repodata = '''Prune/remove packages from repodata.json files for a lesson.'''
-    subcmd_prune_repodata = subparsers.add_parser('prune_repodata', help=help_msg_prune_repodata)
+    # # Subcommand: prune_repodata
+    # help_msg_prune_repodata = '''Prune/remove packages from repodata.json files for a lesson.'''
+    # subcmd_prune_repodata = subparsers.add_parser('prune_repodata', help=help_msg_prune_repodata)
 
     args = p.parse_args()
 
@@ -160,15 +160,15 @@ def main():
             sys.exit(1)
         create_lesson(args.name, args.target_platform, repodata_snapshot=args.repodata_snapshot)
 
-    elif args.subcommand == 'prune_repodata':
-        # run prune_repodata
-        # --lesson
-        # --subdir
-        # --filenames, -f
-        # --namespaces, -n
-        # --versions, -v
-        print('TODO: Utility to prune repodata.json files.')
-        pass
+    # elif args.subcommand == 'prune_repodata':
+    #     # run prune_repodata
+    #     # --lesson
+    #     # --subdir
+    #     # --filenames, -f
+    #     # --namespaces, -n
+    #     # --versions, -v
+    #     print('TODO: Utility to prune repodata.json files.')
+    #     pass
 
     else:
         print('Invalid subcommand.')

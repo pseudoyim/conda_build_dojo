@@ -10,17 +10,24 @@ a hall or place for immersive learning or meditation.
 
 - Show all lessons (in curriculum.yaml)
 - Show my history.
+- Command to clean all "dojo_channels" directories.
+    - `dojo stop` command should end the lessson and clean up the `dojo_channels` directory for that lessson.
+- Get rid of "modified_repodata" key in lesson.yaml (and associated functions).
+- Add color to the prompt (use colorama).
 
-- Patch conda to make it download packages from defaults on Anaconda.org even if the .condarc points to a local file:/// repodata.json.
-- Utility to remove packages from repodata.json (by filename, namespace, version numbers)
-- When starting a lesson with modified_repodata, update their .condarc (back up the existing with "bak_20210202")
-- Modify repodata (start, stop)
+- Lesons to add:
+    - Create a patch (including on GitHub!)
+    - Port a patch
+    - Oniguruma (upstream breaking change)
 
-## Installation
 
-From this repo's root directory:
+## Development
 
-1. Create the conda environment.
+1. Clone this repo to your local machine.
+
+1. Spin up the `c3i_linux-64` docker image, mounted to a path that can reach your clone.
+
+1. From this repo's root directory, create the conda environment.
 ```
 conda env create --file env.yaml
 ```
@@ -46,10 +53,10 @@ pip install -e .
 
 ### Linux
 
-1. Fork this repo to your personal account.
-1. Run the `c3i_linux` Docker image to spin up a container.
-1. Clone this repo onto the container.
-1. Install dev mode (`pip install . -e`)
+1. Fork this repo to your personal Github account.
+1. Clone this repo locally (e.g. on your Mac).
+1. Run the `c3i_linux-64` Docker image to spin up a container, mounted to a path that can reach your clone of the repo and `aggregate`.
+1. `cd` to this repo, and install it in dev mode (`pip install . -e`)
 1. Run `dojo`.
 
 ### OSX
@@ -62,21 +69,13 @@ pip install -e .
 
 ## Create a lesson
 
-Run:
+1. Run:
 ```
-dojo create_lesson --name <LESSON_NAME> [--repodata-snapshot --target-platform <TARGET_PLATFORM>]
+dojo create_lesson --name <LESSON_NAME>
 ```
-
-
-
-
-To prune/edit repodata:
-```
-dojo prune_repodata
-
---subdir
---filenames, -f
---namespaces, -n
---versions, -v
-
-```
+1. Fill out the `lesson.yaml`.
+1. If your lesson requires `dojo_channels` (e.g. fake channels that recreate the channel conditions for your lesson), create and populate a `dojo_channels_pkgs.txt` file in the lesson directory.
+    - Create an env with your target package installed in it. Make sure to include all build, host run, and test requirements. This will capture the FULL list of packages you need to build your target package in dojo.
+    - Run: `conda list -n test_env --explicit`
+    - Copy and paste the list of URLs into `dojo_channel_pkgs.txt`
+        - Delete any URLs for the packages that should be removed for the lesson (i.e. the packages that the learner is expected to build).

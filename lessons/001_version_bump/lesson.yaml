@@ -1,19 +1,20 @@
-# IMPORTANT: If your lesson requires a snapshot of repodata in a certain 
+# IMPORTANT: If your lesson requires a snapshot of a channel(s) in a certain 
 # state (e.g. missing some dependencies for python-3.9), then please make
-# sure the repodata is saved in the following directory structure:
+# sure to add the URLs for the necessary packages in a `dojo_channels_pkgs.txt`
+# file under the lesson directory. For example:
 #
 # dojo/
 #   |---- lessons/
 #           |---- 001_version_bump/
-#                   |---- dojo_repodata/
-#                           |---- <TIMESTAMP>/
-#                                   |---- linux-64/
-#                                           |---- repodata.json
-#                                   |---- noarch/
-#                                           |---- repodata.json
+#                   |---- dojo_channels_pkgs.txt
+#                   |---- lesson.yaml
 
 # The lesson title.
-title: "How to do a version bump"
+title: How to do a version bump
+
+# The person(s) who wrote this lesson.
+authors: 
+  - Paul Yim
 
 # Learning objectives. 
 # Each objective should help complete this sentence: 

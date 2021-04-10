@@ -38,3 +38,23 @@ timestamp,lesson_name,action,active
 2021-03-12 15:51:50 UTC,001_version_bump,start over,True
 2021-03-12 21:11:03 UTC,001_version_bump,completed,False
 2021-04-08 16:22:42 UTC,001_version_bump,start over,True
+2021-04-10 13:40:44 UTC,002_test,start,True
+2021-04-10 13:45:15 UTC,002_test,start,True
+2021-04-10 14:42:28 UTC,002_test,start over,True
+2021-04-10 14:44:07 UTC,002_test,start over,True
+2021-04-10 14:46:15 UTC,002_test,start over,True
+2021-04-10 14:49:45 UTC,002_test,start over,True
+2021-04-10 14:57:53 UTC,002_test,start,True
+2021-04-10 14:59:25 UTC,002_test,start,True
+2021-04-10 15:05:37 UTC,002_test,start over,True
+2021-04-10 15:06:25 UTC,002_test,start,True
+2021-04-10 15:09:54 UTC,002_test,start over,True
+2021-04-10 15:13:31 UTC,002_test,start,True
+2021-04-10 15:20:25 UTC,002_test,start over,True
+2021-04-10 15:25:20 UTC,002_test,start,True
+2021-04-10 15:28:14 UTC,002_test,start,True
+2021-04-10 15:32:49 UTC,002_test,start,True
+2021-04-10 15:34:49 UTC,002_test,start over,True
+2021-04-10 15:50:46 UTC,002_test,start,True
+2021-04-10 15:55:59 UTC,002_missing_deps,start,True
+2021-04-10 15:59:08 UTC,002_unsatisfiable_deps,start,True

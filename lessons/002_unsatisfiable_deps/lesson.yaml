@@ -1,0 +1,178 @@
+# IMPORTANT: If your lesson requires a snapshot of a channel(s) in a certain 
+# state (e.g. missing some dependencies for python-3.9), then please make
+# sure to add the URLs for the necessary packages in a `dojo_channels_pkgs.txt`
+# file under the lesson directory. (See README for more details.) For example:
+#
+# dojo/
+#   |---- lessons/
+#           |---- 001_version_bump/
+#                   |---- dojo_channels_pkgs.txt
+#                   |---- lesson.yaml
+
+# The lesson title.
+title: Resolving Unsatisfiable Dependencies 
+
+# The person(s) who wrote this lesson.
+authors: 
+  - Paul Yim
+
+# Learning objectives. 
+# Each objective should help complete this sentence: 
+# "By the end of this lesson, the learner will be able to..."
+objectives: 
+  - Understand the meaning of the "Unsatisfiable Dependencies" error.
+  - Figure out which dependency package(s) are causing the error.
+
+# Tags.
+# Learners can search for this lesson using tags entered here.
+tags: ['UnsatisfiableError', 'unsatisfiable dependencies', 'missing dependencies']
+
+# Package name and version the learner will be attempting to build.
+target_package: tqdm-4.55.2
+
+# Target platform the package will be built for.
+target_platform: noarch
+
+# URL to the feedstock (use HTTPS, not SSH, to avoid the need for a key).
+feedstock_url: https://github.com/AnacondaRecipes/tqdm-feedstock.git
+
+# The specific commit hash from the feedstock repo that should be initially 
+# checked out. This acts as the starting point for the learner, a "snapshot"
+# in time from which they will complete their lesson objectives.
+commit: 92b0bf2c6ff63caee6f521a6bc85af2d2395c0bf
+
+# Lesson prompts (or steps).
+# List the propmpts/steps the learner should go through.
+# You can also pose questions and answers (for example, one prompt is 
+# a question, and the subsequent prompt is the answer to that question).
+# BONUS: Provide hints to the learner (just tell them the hint will be 
+# revealed in the next step if they want it).
+prompts:
+  - |
+    Try to build "tqdm":
+
+      conda build training_feedstocks/tqdm-feedstock/recipe
+
+  - |
+    You should run into this nasty error:
+
+      conda.exceptions.UnsatisfiableError: The following specifications were found to be incompatible with each other:
+
+      Output in format: Requested package -> Available versions
+
+      Package libstdcxx-ng conflicts for:
+      toml -> python[version='>=2.7'] -> libstdcxx-ng[version='>=7.3.0']
+      python[version='>=2.7'] -> libstdcxx-ng[version='>=7.3.0']
+      pip -> python[version='>=3.9,<3.10.0a0'] -> libstdcxx-ng[version='>=7.3.0']
+
+      etc...
+
+    Can you figure out what to do based on this error output? 
+
+    (Go to next step for the answer.)
+
+  - |
+    The correct answer is: No, you cannot :)
+
+    The error output in its current form is not going to help you get to the bottom of this issue.
+
+    We know that conda-build needs to create environments using the dependencies listed in the recipe's meta.yaml file.
+    So open that file and take a look at the required packages.
+
+      vi training_feedstocks/tqdm-feedstock/recipe/meta.yaml
+
+  - |
+    The required packages are listed under the "requirements" key:
+
+      requirements:
+        host:
+          - python >=2.7
+          - pip
+          - setuptools_scm >=3.4
+          - toml
+        run:
+          - python >=2.7
+
+    Let's see if we can manually create a test environment using those requirements:
+    
+      conda create -n zz_test --dry-run "python >=2.7" pip "setuptools_scm >=3.4" toml
+
+      (include the "--dry-run" flag; make sure to add double quotes around specs with version pinnings)
+
+  - |
+    After running the previous command, you should have gotten the same "UnsatisfiableError". That's a good start!
+
+    What now?
+
+    Let's run it again, this time with the "-vvv" flag so we get a "verbose" look at what conda's trying to do and what problems it's running into.
+
+      conda create -n zz_test --dry-run -vvv "python >=2.7" pip "setuptools_scm >=3.4" toml 
+
+    This will generate a lot of output. Scroll through it to look for clues about which dependencies are unsatisfiable.
+
+  - |
+    You may have noticed lines like this:
+
+      DEBUG conda.resolve:filter_group(635): pip: pruned from 1 -> 0
+
+    In this example, conda is basically saying that it found 1 candidate package for "pip" in the channels, 
+    but 0 packages ultimately satisfied the requirement for the environment we need to build "tqdm".
+
+    Let's grep the output to just those lines so we can clearly see which of these packages are having this problem:
+
+      conda create -n zz_test --dry-run -vvv "python >=2.7" pip "setuptools_scm >=3.4" toml 2>&1 | grep -e "-> 0"
+
+      (use "2>&1 |" to pipe stdout into "grep", and we're specifically grepping for lines that have "-> 0")
+
+  - |
+    You should get:
+
+      DEBUG conda.resolve:filter_group(635): pip: pruned from 1 -> 0
+      DEBUG conda.resolve:filter_group(635): pip: pruned from 1 -> 0
+      DEBUG conda.resolve:filter_group(635): pip: pruned from 1 -> 0
+      DEBUG conda.resolve:filter_group(635): pip: pruned from 1 -> 0
+      DEBUG conda.resolve:filter_group(635): pip: pruned from 1 -> 0
+
+    Okay, so it looks like "pip" is the source of the unsatisfiable error.
+    (NOTE: Sometimes you'll see several different packages listed in this result. If that's the case, dump 
+    the result into a spreadsheet, sort it, and start looking at the package that has the most lines.)
+
+    What's causing "pip" to be uninstallable? Let's see if we can create an environment with just "pip":
+
+      conda create -n zz_test --dry-run pip
+
+  - |
+    You should get:
+
+      PackagesNotFoundError: The following packages are not available from current channels:
+
+        - wheel
+
+    Ah ha! It looks like "wheel" is missing, and this is what's preventing "pip" from being installable.
+
+    Let's build "wheel" locally using the the feedstock in aggregate (add "--python 3.9" to build for py39):
+
+      conda-build --python 3.9 <PATH TO RECIPE IN aggregate - should be mounted on your Docker container>
+
+      EXAMPLE:
+      conda build --python 3.9 /home/aggregate/wheel-feedstock/recipe/ 
+
+    Once it builds successfully, "wheel" will be available locally and can satisfy dependecies for packages that need it.
+
+  - |
+    Now try this comamnd again and let's see if "pip" is now installable:
+
+      conda create -n zz_test --dry-run pip
+
+  - |
+    We can now install "pip", which means we should now have all of our dependencies satisfied to build "tqdm".
+
+    Alrighty, so let's now try to build "tqdm" again.
+
+      conda build training_feedstocks/tqdm-feedstock/recipe
+
+  - |
+    Success!
+
+    Now go forth and conquer all "UnsatisfiableError" errors :D
+

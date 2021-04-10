@@ -10,6 +10,7 @@ import sys
 import yaml
 from datetime import datetime
 from dojo import ROOT_DIR, LESSONS_DIR
+from pathlib import Path
 from tabulate import tabulate
 
 try:
@@ -37,6 +38,36 @@ def configure_condarc(lesson_name):
     print('Updating your .condarc to point to repodata snapshot from <TIMESTAMP> for the following subdirs:')
     # Point .condarc channel to only point at local 'lesson_name/repodata/ts/' directory.
     pass
+
+
+def download_package(url, destination_path):
+    '''
+    Adapted from jpmds/workflow/download.py
+    '''
+    # Make sure the directory path exists for each channel and subdir.
+    pkg_path_parent_dir_parts = destination_path.split('/')[:-1]
+    pkg_path_parent_dir = '/' + os.path.join(*pkg_path_parent_dir_parts)
+    Path(pkg_path_parent_dir).mkdir(parents=True, exist_ok=True)
+
+    path_pieces = url.split('/')
+    basename = path_pieces[-1]
+    channel = path_pieces[-3]
+
+    print(f'  Downloading: {basename} from: {channel}')
+
+    r = requests.get(url, stream=True)
+
+    # The easiest way to notify the user that something went wrong is to 
+    # terminate, loudly. this will raise an HTTPError if 
+    # 400 <= status_code < 600, otherwise, no-op.
+    r.raise_for_status()
+
+    with open(destination_path, 'wb') as f:
+        # Updated to follow: 
+        # https://requests.readthedocs.io/en/master/user/quickstart/#raw-response-content
+        # shutil.copyfileobj(r.raw, f)
+        for chunk in r.iter_content(chunk_size=128):
+            f.write(chunk)
 
 
 def get_latest():
@@ -289,23 +320,24 @@ def update_lesson_progress(lesson_name, step_index, note=''):
 
 LESSON_YAML_TEMPLATE = '''# PLEASE ADD VALUES FOR ALL KEYS BELOW.
 
-# IMPORTANT: If your lesson requires a snapshot of repodata in a certain 
+# IMPORTANT: If your lesson requires a snapshot of a channel(s) in a certain 
 # state (e.g. missing some dependencies for python-3.9), then please make
-# sure the repodata is saved in the following directory structure:
+# sure to add the URLs for the necessary packages in a `dojo_channels_pkgs.txt`
+# file under the lesson directory. For example:
 #
 # dojo/
 #   |---- lessons/
 #           |---- 001_version_bump/
-#                   |---- dojo_repodata/
-#                           |---- <TIMESTAMP>/
-#                                   |---- linux-64/
-#                                           |---- repodata.json
-#                                   |---- noarch/
-#                                           |---- repodata.json
+#                   |---- dojo_channels_pkgs.txt
+#                   |---- lesson.yaml
 
 # The lesson title.
 # Example: "How to do a version bump"
 title: 
+
+# The person(s) who wrote this lesson.
+authors: 
+  - AUTHOR NAME
 
 # Learning objectives. 
 # Each objective should help complete this sentence: 
@@ -334,12 +366,6 @@ feedstock_url:
 # in time from which they will complete their lesson objectives.
 commit: 
 
-# Indicates whether this lesson requires a modified repodata "snapshot".
-# In other words, a version of defaults that's been edited to recreate the 
-# starting point for the lesson. 
-# If your lesson requires the repodata snapshot, update this to be "True".
-modified_repodata: False
-
 # Lesson prompts (or steps).
 # List the propmpts/steps the learner should go through.
 # You can also pose questions and answers (for example, one prompt is 
@@ -349,6 +375,9 @@ modified_repodata: False
 prompts:
   - EXAMPLE - Open the meta.yaml...
   - EXAMPLE - Increment the build number...
+  - |
+    EXAMPLE step with multiline.
+
+      Additional lines.
+
 '''
-
-

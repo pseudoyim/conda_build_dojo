@@ -6,9 +6,10 @@ import pandas as pd
 import shutil
 import sys
 from dojo import ROOT_DIR, LESSONS_DIR, TRAINING_FEEDSTOCKS_DIR
-from dojo.utils import add_lesson_yaml, get_latest, get_repodata_snapshot, \
-    update_history, create_lesson_progress, get_all_lesson_progress, \
-    get_lesson_progress, load_lesson_specs, update_lesson_progress
+from dojo.utils import add_lesson_yaml, download_package, get_latest, \
+    get_repodata_snapshot, update_history, create_lesson_progress, \
+    get_all_lesson_progress, get_lesson_progress, get_timestamp_for_file, \
+    load_lesson_specs, update_lesson_progress
 from git import Repo
 
 
@@ -17,7 +18,7 @@ def clone_checkout_feedstock(feedstock_url, commit):
     Clones the lesson's feedstock and checks
     out the specified commmit.
     '''
-    print('Setting up feedstock snapshot...')
+    print('\nSetting up feedstock snapshot...')
     repo_name = get_repo_name(feedstock_url)
     os.chdir(TRAINING_FEEDSTOCKS_DIR)
 
@@ -33,7 +34,7 @@ def clone_checkout_feedstock(feedstock_url, commit):
     repo.git.checkout(commit)
 
     os.chdir(ROOT_DIR)
-    print('...success!')
+    print('...successfully set up feedstock snapshot!')
 
     return clone_target_path
 
@@ -142,12 +143,66 @@ def setup_feedstock_and_condarc(lesson_name):
     # Clone feedstock and checkout to specifiec commit.
     clone_checkout_feedstock(feedstock_url, commit)
 
-    # If modified_repodata == True,
-    # edit the .condarc to point to local repodata.
-    if lesson_specs['modified_repodata']:
-        # Alter .condarc
-        print('Modify .condarc (NOT YET IMPLEMENTED)')
-        pass
+    # Set up dojo_channels (only if "dojo_channels_pkgs.txt" file exists and it's not empty):
+    dojo_channels_pkgs = os.path.join(LESSONS_DIR, lesson_name, 'dojo_channels_pkgs.txt')
+    if os.path.exists(dojo_channels_pkgs) and os.stat(dojo_channels_pkgs).st_size > 0:
+        print('\nSetting up dojo_channels...')
+
+        # Parse each URL to get its channel, subdir, and filename. For example: 
+        # {
+        #  'https://repo.anaconda.com/pkgs/main/linux-64/python-3.9.2-hdb3f193_0.conda': 
+        #     {
+        #      'channel': 'main', 
+        #      'subdir' : 'linux-64',
+        #      'fn' : 'python-3.9.2-hdb3f193_0.conda'
+        #     }
+        # }
+        url_parsed_dict = {}
+        
+        with open(dojo_channels_pkgs, 'r') as url_list:
+            urls = url_list.read().splitlines()
+            for url in urls:
+                
+                channel = url.split('/')[-3]
+                subdir = url.split('/')[-2]
+                fn = url.split('/')[-1]
+                url_parsed_dict[url] = {'channel': channel, 'subdir': subdir, 'fn': fn}
+
+        # Download each URL to the appropriate destination path.
+        for pkg_url, url_parts in url_parsed_dict.items():
+            destination_path = os.path.join(LESSONS_DIR, 
+                                            lesson_name, 
+                                            'dojo_channels', 
+                                            url_parts['channel'], 
+                                            url_parts['subdir'], 
+                                            url_parts['fn'])
+            download_package(pkg_url, destination_path)
+
+        # Run `conda index` on each dojo channel.
+        from glob import glob
+        dojo_channels = glob(os.path.join(LESSONS_DIR,lesson_name, 'dojo_channels', '*'))
+        for dojo_channel_path in dojo_channels:
+            import subprocess
+            print(f'Running "conda index" on {dojo_channel_path}')
+            subprocess.run(['conda', 'index', dojo_channel_path])
+
+        # If a .condarc exists, back it up.
+        home_path = os.environ['HOME']
+        condarc_path = os.path.join(home_path, '.condarc')
+        if os.path.exists(condarc_path):
+            ts = get_timestamp_for_file()
+            renamed_condarc_path = os.path.join(home_path, f'.condarc_bak_{ts}')
+            os.rename(condarc_path, renamed_condarc_path)
+            print('Found an existing .condarc file.')
+            print(f'Backing it up to: {renamed_condarc_path}')
+
+        # Create a .condarc that points to the lesson's dojo_channels.
+        with open(condarc_path, 'w') as new_condarc:
+            new_condarc.write('channels: \n')  # Must have a space after the colon. See: https://stackoverflow.com/a/9055411
+            for channel in dojo_channels:
+                new_condarc.write(f'  - {channel}\n')
+
+        print('...successfully set up dojo_channels!')
 
 
 def start(lesson_name):
@@ -162,7 +217,7 @@ def start(lesson_name):
 
     # Check whether a progress.csv already exists (which would mean
     # they've started this lesson before). 
-    # If so, ask whether they want to resume or start over.
+    # If so, ask whether they want to resume, start over, or cancel.
     if os.path.exists(os.path.join(LESSONS_DIR, lesson_name, 'progress.csv')):
         while True:
             user_response = str(input(f'You previously started "{lesson_name}". \nDo you wish to (r)esume, (s)tart over, or (c)ancel? '))
@@ -170,16 +225,16 @@ def start(lesson_name):
                 print('Sorry, I did not understand.')
             else:
                 break
-        if user_response.lower() == 'r':
+        if user_response.lower() == 'r':  # Resume
             setup_feedstock_and_condarc(lesson_name)
             update_history(lesson_name, 'resume')
             step_current(verbose=True)
-        elif user_response.lower() == 's':
+        elif user_response.lower() == 's':  # Start over
             setup_feedstock_and_condarc(lesson_name)
             update_history(lesson_name, 'start over')
             update_lesson_progress(lesson_name, 0)
             step_current(verbose=True)
-        elif user_response.lower() == 'c':
+        elif user_response.lower() == 'c':  # Cancel
             sys.exit(0)
 
     else:
