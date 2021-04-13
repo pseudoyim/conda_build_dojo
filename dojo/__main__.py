@@ -120,7 +120,15 @@ def main():
     args = p.parse_args()
 
     if args.subcommand == 'lessons':
-        show_lessons()
+        if args.all:
+            status = 'all'
+        elif args.done:
+            status = 'done'
+        elif args.not_done:
+            status = 'not_done'
+        else:
+            status = 'all'
+        show_lessons(status=status)
 
     elif args.subcommand == 'search':
         search_tag(args.tag)

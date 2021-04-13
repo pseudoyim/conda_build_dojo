@@ -187,6 +187,18 @@ def update_history(lesson_name, action):
 #    LESSONS    #
 #################
 
+def load_curriculum():
+    curriculum_yaml_path = os.path.join(ROOT_DIR, 'curriculum.yaml')
+
+    try:
+        with open(curriculum_yaml_path, mode='r') as curriculum_specs:
+            import yaml    # i.e. pyyaml
+            return yaml.safe_load(curriculum_specs)
+    except FileNotFoundError:
+        print(f'ERROR: curriculum.yaml not found.')
+        sys.exit(1)
+
+
 def load_lesson_specs(lesson_name):
     '''
     Gets specs from the lesson.yaml
@@ -202,14 +214,18 @@ def load_lesson_specs(lesson_name):
         sys.exit(1)
 
 
-def show_lessons(all_platforms=False):
+def show_lessons(status=None):
     # Load conda_build_dojo/curriculum.yaml
 
     # Display:
-    # topic, title, lesson_name, target_platform
-    print('TODO: Show lessons here (from curriculum.yaml).')
-    pass
+    # topic, title, lesson_name, target_platform, tags
+    curriculum_specs = load_curriculum()
 
+    print(status)
+
+    topics = curriculum_specs['topics']
+    print(topics)
+    
 
 def create_lesson_progress(lesson_name):
     ts = get_timestamp_for_action()

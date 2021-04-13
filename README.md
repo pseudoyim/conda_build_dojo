@@ -36,6 +36,7 @@ dojo create_lesson --name <LESSON_NAME>
     - Run: `conda list -n test_env --explicit`
     - Copy and paste the list of URLs into `dojo_channel_pkgs.txt`
         - Delete any URLs for the packages that should be removed for the lesson (i.e. the packages that the learner is expected to build).
+1. Add your lesson to the `curriculum.yaml` under a specific topic (or create your own topic if none of the existing ones meet your needs).
 
 ## Design
 - The learner makes their own fork of this repo and clones it.
@@ -71,6 +72,7 @@ pip install -e .
 - dojo lessons 
 	- Show lessons (in curriculum.yaml)
 	- show "done", "started", "not started"
+- Build python-tabulate off of master (https://github.com/astanin/python-tabulate/pull/117#issuecomment-804140931) to get the maxcolwidth functionality; use this until v0.8.10 is released.
 - Add color to the prompt (use colorama, add to env.yaml).
 - Lesons to add:
     - Create a patch (including on GitHub!)
