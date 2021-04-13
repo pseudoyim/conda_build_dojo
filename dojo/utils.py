@@ -218,16 +218,26 @@ def search_tag(search_tag):
 #################
 
 def load_history():
+    '''
+    Returns the history.csv as a df.
+    If it doesn't exist (e.g. following a `dojo clean`),
+    then a new one shall be created and returned.
+    '''
+    history_path = os.path.join(ROOT_DIR, 'history.csv')
+    if not os.path.exists(history_path):
+        columns = ['timestamp', 'lesson_name', 'action', 'active']
+        df = pd.DataFrame(columns=columns)
+        return df
     return pd.read_csv(os.path.join(ROOT_DIR, 'history.csv'), index_col=False)
 
 
-def show_history(all_history=False):
-    print('TODO: Show history here.')
-    # Load conda_build_dojo/history.csv
+# def show_history(all_history=False):
+#     print('TODO: Show history here.')
+#     # Load conda_build_dojo/history.csv
 
-    # Show: Lesson   Last Action   Timestamp
+#     # Show: Lesson   Last Action   Timestamp
 
-    pass
+#     pass
 
 
 def update_history(lesson_name, action):

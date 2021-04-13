@@ -1,8 +1,8 @@
 import argparse
 import sys
-from dojo.utils import search_tag, show_history, show_lessons
+from dojo.utils import search_tag, show_lessons
 from dojo.lesson import start, stop, step_previous, step_current, \
-    step_next, step_jump, step_add_note, create_lesson
+    step_next, step_jump, step_add_note, create_lesson, clean_history_and_progress
 
 
 def main():
@@ -23,7 +23,17 @@ def main():
     subcmd_lessons = subparsers.add_parser('lessons', help=help_msg_lessons)
     subcmd_lessons.add_argument(
         '--all',
-        help='Show all lessons for all platforms.',
+        help='Show all lessons.',
+        action='store_true',
+        )
+    subcmd_lessons.add_argument(
+        '--done',
+        help='Show the lessons you have completed.',
+        action='store_true',
+        )
+    subcmd_lessons.add_argument(
+        '--not-done',
+        help='Show the lessons you have not yet completed.',
         action='store_true',
         )
 
@@ -34,11 +44,6 @@ def main():
         'tag',
         help='Search lessons for this tag.',
         )
-
-    # Subcommand: history
-    help_msg_history = '''View which lessons you've started and completed.'''
-    subcmd_history = subparsers.add_parser('history', help=help_msg_history)
-
 
     # Subcommand: start
     help_msg_start = '''Start a lesson.'''
@@ -107,19 +112,10 @@ def main():
         '--name',
         help='Short name of the lesson (use underscores instead of spaces). For example: "creating_a_patch".',
         )
-    # subcmd_create_lesson.add_argument(
-    #     '--repodata-snapshot',
-    #     action='store_true',
-    #     help='Whether to include a snapshot of the current repodata.json file from defaults.',
-    #     )
-    # subcmd_create_lesson.add_argument(
-    #     '--target-platform',
-    #     help='(Required for repodata snapshot) Platform the lesson should be run on (options: linux-64, osx-64, and win-64).',
-    #     )  
 
-    # # Subcommand: prune_repodata
-    # help_msg_prune_repodata = '''Prune/remove packages from repodata.json files for a lesson.'''
-    # subcmd_prune_repodata = subparsers.add_parser('prune_repodata', help=help_msg_prune_repodata)
+    # Subcommand: clean
+    help_msg_clean = '''Delete all progress.csv files and history.csv.'''
+    subcmd_history = subparsers.add_parser('clean', help=help_msg_clean)
 
     args = p.parse_args()
 
@@ -128,9 +124,6 @@ def main():
 
     elif args.subcommand == 'search':
         search_tag(args.tag)
-
-    elif args.subcommand == 'history':
-        show_history()
 
     elif args.subcommand == 'start':
         start(args.lesson_name)
@@ -160,15 +153,8 @@ def main():
             sys.exit(1)
         create_lesson(args.name, args.target_platform)
 
-    # elif args.subcommand == 'prune_repodata':
-    #     # run prune_repodata
-    #     # --lesson
-    #     # --subdir
-    #     # --filenames, -f
-    #     # --namespaces, -n
-    #     # --versions, -v
-    #     print('TODO: Utility to prune repodata.json files.')
-    #     pass
+    elif args.subcommand == 'clean':
+        clean_history_and_progress()
 
     else:
         print('Invalid subcommand.')

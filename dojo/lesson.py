@@ -22,6 +22,34 @@ def clean_dojo_channels(lesson_name):
         print('...success!')
 
 
+def clean_history_and_progress():
+    '''
+    Deletes history.csv and progress.csv files.
+    '''
+    while True:
+        user_response = str(input(f'CONFIRM: Are you sure you want to delete ALL of your history and progress files? (y/n) '))
+        if user_response.lower() not in ['y', 'n']:
+            print('Sorry, I did not understand.')
+        else:
+            break
+
+    if user_response.lower() == 'y':
+        history_path = os.path.join(ROOT_DIR, 'history.csv')
+        if os.path.exists(history_path):
+            os.remove(history_path)
+        
+        from glob import glob
+        all_lesson_dirs = glob(os.path.join(LESSONS_DIR,'*'))
+        for lesson_dir in all_lesson_dirs:
+            progress_path = os.path.join(lesson_dir, 'progress.csv')
+            if os.path.exists(progress_path):
+                os.remove(progress_path)
+        
+        print('Done. All history and progress files have been deleted.')
+
+    elif user_response.lower() == 'n':
+        sys.exit(0)
+
 def clone_checkout_feedstock(feedstock_url, commit):
     '''
     Clones the lesson's feedstock and checks

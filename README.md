@@ -11,10 +11,10 @@ a hall or place for immersive learning or meditation.
 ### Linux
 
 1. Fork this repo to your personal Github account.
-1. Clone this repo locally (e.g. on your Mac).
+1. Clone your fork of this repo locally (e.g. on your Mac).
 1. Run the `c3i_linux-64` Docker image to spin up a container, mounted to a path that can reach your clone of this `conda_build_dojo` repo and `aggregate`.
 1. In the container, `cd` to this repo, and install it in dev mode (`pip install . -e`)
-1. Run `dojo --help`.
+1. Run `dojo --help`. If successful, you're ready to roll.
 
 ### OSX
 
@@ -60,12 +60,18 @@ conda activate dojo_dev
 ```
 pip install -e .
 ```
+1. If you're planning to make a change to the [upstream repo](`github.com/anaconda-distribution/conda_build_dojo`) (e.g. to contribute a new lesson), do the following:
+	1. Checkout a dev branch.
+	1. Make your changes.
+	1. Test your changes.
+	1. Run `dojo clean` (to get rid of any progress and history that shouldn't be committed upstream).
+	1. Commit and push your changes to the upstream repo and create a PR.
 
 ## TODO
-- Show all lessons (in curriculum.yaml)
-- Show my history.
-- Add color to the prompt (use colorama).
-- Clean up.
+- dojo lessons 
+	- Show lessons (in curriculum.yaml)
+	- show "done", "started", "not started"
+- Add color to the prompt (use colorama, add to env.yaml).
 - Lesons to add:
     - Create a patch (including on GitHub!)
     - Port a patch
