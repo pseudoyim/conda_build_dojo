@@ -31,7 +31,7 @@ a hall or place for immersive learning or meditation.
 dojo create_lesson --name <LESSON_NAME>
 ```
 1. Fill out the `lesson.yaml`.
-1. If your lesson requires `dojo_channels` (e.g. fake channels that recreate the channel conditions for your lesson), create and populate a `dojo_channels_pkgs.txt` file in the lesson directory.
+1. (OPTIONAL) If your lesson requires `dojo_channels` (e.g. fake channels that recreate the channel conditions for your lesson), create and populate a `dojo_channels_pkgs.txt` file in the lesson directory.
     - Create an env with your target package installed in it. Make sure to include all build, host run, and test requirements. This will capture the FULL list of packages you need to build your target package in dojo.
     - Run: `conda list -n test_env --explicit`
     - Copy and paste the list of URLs into `dojo_channel_pkgs.txt`
@@ -47,20 +47,20 @@ dojo create_lesson --name <LESSON_NAME>
 ## Development
 
 1. Clone this repo to your local machine.
-1. Spin up the `c3i_linux-64` docker image, mounted to a path that can reach your clone of the repo and `aggregate`.
-1. From this repo's root directory, create the conda environment.
+2. Spin up the `c3i_linux-64` docker image, mounted to a path that can  reach your clone of the repo and `aggregate`.
+3. From this repo's root directory, create the conda environment.
 ```
 conda env create --file env.yaml
 ```
-1. Activate the conda environment.
+4. Activate the conda environment.
 ```
 conda activate dojo_dev
 ```
-1. Install this repo in dev mode.
+5. Install this repo in dev mode.
 ```
 pip install -e .
 ```
-1. If you're planning to make a change to the [upstream repo](`github.com/anaconda-distribution/conda_build_dojo`) (e.g. to contribute a new lesson), do the following:
+6. If you're planning to make a change to the [upstream repo](`github.com/anaconda-distribution/conda_build_dojo`) (e.g. to contribute a new lesson), do the following:
 	1. Checkout a dev branch.
 	1. Make your changes.
 	1. Test your changes.
