@@ -6,15 +6,27 @@ a hall or place for immersive learning or meditation.
 
 *Conda-Build Dojo* walks you through lessons that re-create scenarios encountered during package building.
 
-## Installation
+## Setup
 
 ### Linux
 
 1. Fork this repo to your personal Github account.
-1. Clone your fork of this repo locally (e.g. on your Mac).
-1. Run the `c3i_linux-64` Docker image to spin up a container, mounted to a path that can reach your clone of this `conda_build_dojo` repo and `aggregate`.
-1. In the container, `cd` to this repo, and install it in dev mode (`pip install . -e`)
-1. Run `dojo --help`. If successful, you're ready to roll.
+2. Clone your fork of this repo locally (e.g. on your Mac).
+3. Pull and run the [`c3i-linux-64`](https://github.com/conda/conda-concourse-ci/tree/master/docker/c3i-linux-64) Docker image to spin up a container, mounted to a path that can reach your clone of this `conda_build_dojo` repo and `aggregate`.
+```
+docker pull conda/c3i-linux-64:latest
+
+docker run -it --mount 'src=<PATH THAT CAN ACCESS THE REPOS ON HOST MACHINE>,target=/home/,type=bind' conda/c3i-linux-64 /bin/bash
+
+  EXAMPLE:
+  docker run -it --mount 'src=/Users/pyim/shared/projects/,target=/home/,type=bind' conda/c3i-linux-64 /bin/bash
+```
+4. In the container, do the following:
+	- Update `conda-build`: `conda update -y conda-build`
+	- Go to the repo: `cd <PATH TO>/conda_build_dojo`
+	- Pip install the repo and its deps in dev mode: `pip install -e .`
+	- Pip install `python-tabulate` from its github source: `pip install git+https://github.com/astanin/python-tabulate.git`
+	- Run: `dojo --help`. If you see the help message, you're ready to roll.
 
 ### OSX
 
@@ -72,9 +84,10 @@ pip install -e .
 - dojo lessons 
 	- Show lessons (in curriculum.yaml)
 	- show "done", "started", "not started"
-- Build python-tabulate off of master (https://github.com/astanin/python-tabulate/pull/117#issuecomment-804140931) to get the maxcolwidth functionality; use this until v0.8.10 is released.
+	- --authors
 - Add color to the prompt (use colorama, add to env.yaml).
 - Lesons to add:
-    - Create a patch (including on GitHub!)
+    - Create a patch (including on GitHub using .patch extension!)
     - Port a patch
     - Oniguruma (upstream breaking change)
+    - How to inspect a failed build (e.g. build_env, h_env)

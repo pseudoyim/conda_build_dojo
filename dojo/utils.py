@@ -132,14 +132,12 @@ def search_tag(search_tag):
         for tag in tags:
             if search_tag.lower() in tag.lower():
                 title = lesson_specs['title']
-                objectives = lesson_specs['objectives']
+                objectives = ' * '.join(str(obj) for obj in lesson_specs['objectives'])
                 match = [title, lesson_name, objectives, tag]
                 results.append(match)
 
     print(f'\nSearch results for: {search_tag}')
-    # TODO: When `tabulate` project releases fix for v0.8.9 (with maxcolwidths keyword arg), use it to set max col widths.
-    # print(tabulate(results, headers=['Title', 'Lesson Name', 'Objectives', 'Matching Tag'], tablefmt="grid", maxcolwidth=[None, None, 24, None]))
-    print(tabulate(results, headers=['Title', 'Lesson Name', 'Objectives', 'Matching Tag'], tablefmt="grid",))
+    print(tabulate(sorted(results), headers=['Title', 'Lesson Name', 'Objectives', 'Matching Tag'], maxcolwidths=[None, None, 42, None], tablefmt="grid"))
 
 
 #################
