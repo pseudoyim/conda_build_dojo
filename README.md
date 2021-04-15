@@ -28,18 +28,22 @@ a hall or place for immersive learning or meditation.
     ```
     docker build --network=host -t dojo_c3i_linux_64 ./docker_images/c3i-linux-64/
     ```
-5. Run the container, mounted to a local directory on your host that can reach `aggregate` and `conda_build_dojo`.
+5. Run the Docker container, mounted to a local directory on your host that can reach `aggregate` and `conda_build_dojo`.
     ```
     docker run -it --mount 'src=</absolute/path/to/conda_build_dojo_and_aggregate_parent>,target=/home/,type=bind' dojo_c3i_linux_64 /bin/bash
 
     # EXAMPLE (if `aggregate` and `conda_build_dojo` share the same parent directory called `shared`):
     docker run -it --mount 'src=/Users/pyim/shared/,target=/home/,type=bind' dojo_c3i_linux_64 /bin/bash
     ```
-6. Install `dojo`.
+6. You should now be in the container. Navigate to the `conda_build_dojo` directory.
+    ```
+    cd /home/conda_build_dojo
+    ```
+7. Install `dojo`.
     ```
     pip install -e .
 
-    # Separately install `python-tabulate` from its master branch.
+    # As of 4/15/2021, also separately install `python-tabulate` from its master branch.
     pip install git+https://github.com/astanin/python-tabulate.git
     ```
 7. Confirm `dojo` is installed.
@@ -54,7 +58,7 @@ a hall or place for immersive learning or meditation.
     ```
     dojo start <LESSON NAME>
     ```
-10. As you complete lessons in `dojo`, save your progress by committing and pushing to your `origin` repo.
+10. As you complete lessons in `dojo`, save your progress by committing and pushing to your personal `origin` repo. (Do this from your host machine - *not* from the Docker container).
     ```
     git push origin main
     ```
@@ -118,10 +122,8 @@ pip install -e .
         ```
     - Create a PR.
 
-
 ## TODO
-- Create a Dockerfile to save in this repo (see example from QLib).
-- Move this repo to the anaconda-distribution org.
+- Move this repo to the anaconda-distribution org (! run `dojo clean` !)
 - Lesons to add:
     - Create a patch (including on GitHub using .patch extension!)
     - Port a patch
