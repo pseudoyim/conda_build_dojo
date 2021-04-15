@@ -1,8 +1,6 @@
 topics:
     basics:
         - 001_version_bump
-        - 003_create_a_patch
     debug:
         - 002_unsatisfiable_deps
-    investigate:
-         - 004_updating_compiler_flags  # oniguruma
+    # investigate:

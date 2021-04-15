@@ -5,6 +5,7 @@ import os
 import pandas as pd
 import shutil
 import sys
+from colorama import Fore, Back, Style
 from dojo import ROOT_DIR, LESSONS_DIR, TRAINING_FEEDSTOCKS_DIR
 from dojo.utils import add_lesson_yaml, download_package, get_latest, \
     update_history, create_lesson_progress, get_all_lesson_progress, \
@@ -133,7 +134,7 @@ def display_prompt(lesson_name, lesson_specs, step_index, verbose=False):
     else: 
         notes = None
 
-    print('\n=============================== CONDA-BUILD DOJO ===============================')
+    print(Fore.CYAN + '\n=============================== CONDA-BUILD DOJO ===============================')
     print('||                                                                            ||')
     print(f'\n  Lesson: "{lesson_specs["title"]}"')
     if details:
@@ -145,6 +146,7 @@ def display_prompt(lesson_name, lesson_specs, step_index, verbose=False):
     print('\n||                                                                            ||')
     print('================================================================================')
     print(f' OPTIONS: dojo (p)revious; (c)urrent; (n)ext; (j)ump; (a)dd note; (stop) lesson.\n')
+    print(Style.RESET_ALL)
 
 
 def get_last_lesson_number():
@@ -285,7 +287,6 @@ def step_previous(verbose=False):
     lesson_specs = load_lesson_specs(lesson_name)
 
     update_lesson_progress(lesson_name, new_step_index)
-
     display_prompt(lesson_name, lesson_specs, new_step_index, verbose=verbose)
 
 
@@ -312,12 +313,15 @@ def step_next(verbose=False):
         # There are no more steps, so the lesson is done.
         lesson_title = lesson_specs['title']
         update_history(lesson_name, 'completed')
-        print(f'\n+ + + + Congrats! You have completed "{lesson_title}". + + + +')
-        print(f'\nYou should now be able to:')
+        # print()
+        print(Fore.BLACK + Back.YELLOW + '')
+        print(f'\n + + + + Congrats! You have completed "{lesson_title}". + + + +')
+        print(f'\n You should now be able to:')
         for obj in lesson_specs['objectives']:
-            print(f'  - {obj}')
-        print('\nYou can review this lesson (and any notes you added) by re-starting the lesson.')
-        print('Otherwise, onward and upward to a new lesson!\n')
+            print(f'   - {obj}')
+        print('\n You can review this lesson (and any notes you added) by re-starting the lesson.')
+        print(' Otherwise, onward and upward to a new lesson!')
+        print(Style.RESET_ALL)
         stop(completed_lesson_name=lesson_name)
         sys.exit(0)
 

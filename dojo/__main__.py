@@ -36,6 +36,11 @@ def main():
         help='Show the lessons you have not yet completed.',
         action='store_true',
         )
+    subcmd_lessons.add_argument(
+        '--authors',
+        help='Show author stats.',
+        action='store_true',
+        )
 
     # Subcommand: search
     help_msg_search = '''Search for lessons based on a tag.'''
@@ -114,7 +119,7 @@ def main():
         )
 
     # Subcommand: clean
-    help_msg_clean = '''Delete all progress.csv files and history.csv.'''
+    help_msg_clean = '''(For dev only) Delete all progress.csv files and history.csv.'''
     subcmd_history = subparsers.add_parser('clean', help=help_msg_clean)
 
     args = p.parse_args()
@@ -126,6 +131,8 @@ def main():
             status = 'done'
         elif args.not_done:
             status = 'not_done'
+        elif args.authors:
+            status = 'authors'
         else:
             status = 'all'
         show_lessons(status=status)

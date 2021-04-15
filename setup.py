@@ -11,9 +11,8 @@ setuptools.setup(
     name='conda_build_dojo',
     version='0.1.0',
     description="Conda-Build Dojo guides you through debugging scenarios encountered during package building.",
-    url='https://github.com/pseudoyim/conda_build_dojo',
+    url='https://github.com/anaconda-distribution/conda_build_dojo',
     author="Paul Yim",
-    author_email='paul.j.yim@gmail.com',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
@@ -26,7 +25,8 @@ setuptools.setup(
     install_requires=[
 		'conda',
 		'conda-build',
-		'gitpython',
+		'colorama',
+        'gitpython',
 		'pandas',
 		'pyyaml',
 		'tabulate',

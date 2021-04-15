@@ -8,6 +8,8 @@ import pandas as pd
 import requests
 import sys
 import yaml
+from collections import Counter
+from colorama import Fore, Back, Style
 from datetime import datetime
 from dojo import ROOT_DIR, LESSONS_DIR
 from pathlib import Path
@@ -81,7 +83,7 @@ def get_latest():
         last_row = list(df_history.tail(1).values)[0]
 
         # Check if the last record has "active = True".
-        active_status = last_row[-1]
+        active_status = last_row[-2]
         if active_status is True:
             latest_lesson_name = last_row[1]
         else:
@@ -136,8 +138,9 @@ def search_tag(search_tag):
                 match = [title, lesson_name, objectives, tag]
                 results.append(match)
 
-    print(f'\nSearch results for: {search_tag}')
-    print(tabulate(sorted(results), headers=['Title', 'Lesson Name', 'Objectives', 'Matching Tag'], maxcolwidths=[None, None, 42, None], tablefmt="grid"))
+    print(Fore.CYAN + f'\nSearch results for: "{search_tag}"')
+    print(tabulate(sorted(results), headers=['Title', 'Lesson Name', 'Objectives', 'Matching Tag'], maxcolwidths=[30, 30, 30, 30], tablefmt="grid"))
+    print(Style.RESET_ALL)    
 
 
 #################
@@ -152,7 +155,7 @@ def load_history():
     '''
     history_path = os.path.join(ROOT_DIR, 'history.csv')
     if not os.path.exists(history_path):
-        columns = ['timestamp', 'lesson_name', 'action', 'active']
+        columns = ['timestamp', 'lesson_name', 'action', 'active', 'completed']
         df = pd.DataFrame(columns=columns)
         return df
     return pd.read_csv(os.path.join(ROOT_DIR, 'history.csv'), index_col=False)
@@ -167,15 +170,21 @@ def update_history(lesson_name, action):
     df_history = load_history()
     ts = get_timestamp_for_action()
 
-    if action in ['completed', 'stop']:
+    if action == 'completed':
         active = False
+        completed = True
+    elif action == 'stop':
+        active = False
+        completed = False
     else:
         active = True
+        completed = False
 
     new_row = {'timestamp': ts,
                'lesson_name': lesson_name,
                'action': action,
-               'active': active
+               'active': active,
+               'completed': completed
               }
     df_history = df_history.append(new_row, ignore_index=True)
     df_history.to_csv(os.path.join(ROOT_DIR, 'history.csv'), index=False)
@@ -185,7 +194,7 @@ def update_history(lesson_name, action):
 #    LESSONS    #
 #################
 
-def load_curriculum():
+def load_curriculum_specs():
     curriculum_yaml_path = os.path.join(ROOT_DIR, 'curriculum.yaml')
 
     try:
@@ -213,17 +222,57 @@ def load_lesson_specs(lesson_name):
 
 
 def show_lessons(status=None):
-    # Load conda_build_dojo/curriculum.yaml
+    # Columns:
+    # topic, title, lesson_name, objectives, author(s), tags
+    curriculum_specs = load_curriculum_specs()
 
-    # Display:
-    # topic, title, lesson_name, target_platform, tags
-    curriculum_specs = load_curriculum()
+    results = []
+    for topic, lessons in curriculum_specs['topics'].items():
+        for lesson_name in lessons:
+            lesson_specs = load_lesson_specs(lesson_name)
+            title = lesson_specs['title']
+            objectives = ' * '.join(str(obj) for obj in lesson_specs['objectives'])
+            authors = ', '.join(str(author) for author in lesson_specs['authors'])
+            tags = '; '.join(str(tag) for tag in lesson_specs['tags'])
 
-    print(status)
+            df_history = load_history()
+            df_completed = df_history[(df_history.lesson_name == lesson_name) & (df_history.completed == True)]
+            if df_completed.empty:
+                completed = False
+            else:
+                completed = True
 
-    topics = curriculum_specs['topics']
-    print(topics)
-    
+            result_row = [topic, title, lesson_name, objectives, authors, tags, completed]
+            results.append(result_row)
+
+    columns = ['Topic', 'Title', 'Lesson name', 'Objectives', 'Author(s)', 'Tags', 'Completed']
+    df_results = pd.DataFrame(results, columns=columns)
+
+    if status == 'authors':
+        authors_column = df_results['Author(s)'].tolist()
+        authors_for_lesson = [i.split(', ') for i in authors_column]
+        author_instances = [name for lesson in authors_for_lesson for name in lesson]
+        author_count = Counter(author_instances).most_common()
+        print(Fore.YELLOW + '\nAuthors and the number of lessons they\'ve written')
+        print('=================================================')
+        for tally in author_count:
+            print(f'{tally[0]}: {tally[1]}')
+        print(Style.RESET_ALL)
+        sys.exit(0)
+
+    elif status == 'done':
+        df_results_done = df_results[df_results['Completed'] == True]
+        final = df_results_done.values.tolist()
+
+    elif status == 'not_done':
+        df_results_not_done = df_results[df_results['Completed'] == False]
+        final = df_results_not_done.values.tolist()
+
+    else:
+        final = df_results.values.tolist()
+
+    print(Fore.CYAN + tabulate(sorted(final), headers=columns, maxcolwidths=[30, 30, 30, 30, 30, 30, 30], tablefmt="grid"))
+    print(Style.RESET_ALL)    
 
 def create_lesson_progress(lesson_name):
     ts = get_timestamp_for_action()
