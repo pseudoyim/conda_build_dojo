@@ -2,7 +2,7 @@
 # original c3i-linux-64 Dockerfile that can be found here: 
 # https://github.com/conda/conda-concourse-ci/blob/master/docker/c3i-linux-64/Dockerfile
 
-FROM centos:6.9
+FROM centos:7
 
 MAINTAINER Paul Yim <pyim@anaconda.com>
 
@@ -10,6 +10,8 @@ MAINTAINER Paul Yim <pyim@anaconda.com>
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
+
+RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
 RUN yum install -y \
   gettext gettext.i686 \

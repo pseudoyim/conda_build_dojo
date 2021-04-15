@@ -7,7 +7,7 @@ a hall or place for immersive learning or meditation.
 *Conda-Build Dojo* walks you through lessons that re-create scenarios encountered during package building.
 
 ## Setup 
-NOTE: Only `linux-64` is supported at this time.
+**NOTE**: Only `linux-64` is supported at this time.
 
 1. Fork this repo to your personal Github account.
 2. Clone your forked repo to your local machine (e.g. your Mac), preferably the same directory as `aggregate`.
@@ -18,7 +18,7 @@ NOTE: Only `linux-64` is supported at this time.
     ```
     - Add a new remote source, called `upstream`, pointed at the URL of the *original* repo.
     ```
-    git remote add upstream https://github.com/anaconda-distribution/conda_build_dojo.git
+    git remote add upstream git@github.com:anaconda-distribution/conda_build_dojo.git
     ```
     - Now check the remote sources. You should see `origin` *and* `upstream`.
     ```
@@ -30,14 +30,17 @@ docker build --network=host -t dojo_c3i_linux_64 ./docker_images/c3i-linux-64/
 ```
 5. Run the container, mounted to a local directory on your host that can reach `aggregate` and `conda_build_dojo`.
 ```
-docker run -it --mount 'src=</absolute/path/to/conda_build_dojo_and_aggregate_parent>,target=/home/,type=bind' dojo_c3i_linux_64 /bin/bash -c 'cd /home/conda_build_dojo; pip install -e .
+docker run -it --mount 'src=</absolute/path/to/conda_build_dojo_and_aggregate_parent>,target=/home/,type=bind' dojo_c3i_linux_64 /bin/bash
 
 # EXAMPLE (if `aggregate` and `conda_build_dojo` share the same parent directory called `shared`):
-docker run -it --mount 'src=/Users/pyim/shared/,target=/home/,type=bind' dojo_c3i_linux_64 /bin/bash -c 'cd /home/conda_build_dojo; pip install -e .
+docker run -it --mount 'src=/Users/pyim/shared/,target=/home/,type=bind' dojo_c3i_linux_64 /bin/bash
 ```
 6. Install `dojo`.
 ```
 pip install -e .
+
+# Separately install `python-tabulate` from its master branch.
+pip install git+https://github.com/astanin/python-tabulate.git
 ```
 7. Confirm `dojo` is installed.
 ```
@@ -94,7 +97,7 @@ dojo create_lesson --name <LESSON_NAME>
 3. Fill out the `lesson.yaml`.
 4. (OPTIONAL) If your lesson requires `dojo_channels` (e.g. fake channels that recreate the channel conditions for your lesson), create and populate a `dojo_channels_pkgs.txt` file in your lesson directory.
     - Create a conda env (e.g. `test_env`) with your target package installed in it. Make sure to include all `build`, `host`, `run`, and `test` requirements. This will capture the *full* set of packages you need to build your target package in `dojo`.
-    - Afte the env is created, run: `conda list -n test_env --explicit`
+    - After the env is created, run: `conda list -n test_env --explicit`
     - Copy and paste the list of URLs into the `dojo_channel_pkgs.txt` file.
         - Delete the URLs for any packages that should be removed for the lesson (i.e. the packages that the learner is expected to build on their own).
 5. Test your lesson (e.g. try out each step yourself).
@@ -123,15 +126,15 @@ conda activate dojo_dev
 pip install -e .
 ```
 5. If you're planning to make a change to the [upstream repo](`github.com/anaconda-distribution/conda_build_dojo`), do the following:
-    1. Checkout a dev branch.
-    1. Make your changes.
-    1. Test your changes.
-    1. Run `dojo clean` (to get rid of any progress and history that should not be committed upstream).
-    1. Commit and push your changes to the [upstream repo](`github.com/anaconda-distribution/conda_build_dojo`).
+    - Checkout a dev branch.
+    - Make your changes.
+    - Test your changes.
+    - Run `dojo clean` (to get rid of any progress and history that should not be committed upstream).
+    - Commit and push your changes to the [upstream repo](`github.com/anaconda-distribution/conda_build_dojo`).
     ```
     git push upstream <YOUR DEV BRANCH>
     ```
-    1. Create a PR.
+    - Create a PR.
 
 
 ## TODO
