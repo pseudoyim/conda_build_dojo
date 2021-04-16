@@ -69,7 +69,7 @@ a hall or place for immersive learning or meditation.
     ```
     git push origin main
     ```
-11. If you exit your container, you can re-run it using the command in Step 5. If your iamge gets destroyed, you can rebuild it using the command in Step 4.
+11. If you exit your Docker container, you can re-run it using the command in Step 5. If your Docker image gets destroyed, you can rebuild it using the command in Step 4.
 
 ### Getting updates
 In the future, when you need to pull updates from the upstream repo (e.g. new lessons, bug fixes, or enhancements), run this form your host machine (**not** the Docker container):
