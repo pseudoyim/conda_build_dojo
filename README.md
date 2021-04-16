@@ -7,10 +7,10 @@ a hall or place for immersive learning or meditation.
 *Conda-Build Dojo* walks you through lessons that re-create scenarios encountered during package building.
 
 
-[Requirements](#requirements)
-[Setup](#setup)
-    [Getting updates](#getting-updates)
-[How to contribute a lesson](#how-to-contribute-a-lesson)
+[Requirements](#requirements)<br>
+[Setup](#setup)<br>
+[Getting updates](#getting-updates)<br>
+[How to contribute a lesson](#how-to-contribute-a-lesson)<br>
 [Development](#development)
 
 
