@@ -15,7 +15,7 @@ a hall or place for immersive learning or meditation.
 
 
 ## Requirements
-- A system running some Unix variant.
+- A system running some Unix variant
 - Docker
 
 
@@ -75,8 +75,8 @@ In the future, when you need to pull updates from the upstream repo (e.g. new le
 ```
 git pull upstream main
 
-# Re-install with the latest updates.
-pip install -e .
+# Re-install `dojo` with the latest updates.
+start
 ```
 
 
@@ -88,10 +88,10 @@ pip install -e .
     ```
 3. Fill out all of the sections in the `lesson.yaml`.
 4. (OPTIONAL) If your lesson requires `dojo_channels` (e.g. fake channels that recreate the channel conditions for your lesson), create and populate a `dojo_channels_pkgs.txt` file in your lesson directory.
-    - Create a conda env (e.g. `test_env`) with your target package installed in it. Make sure to include all `build`, `host`, `run`, and `test` requirements. This will capture the *full* set of packages you need to build your target package in `dojo`.
+    - In a separate terminal session, create a conda env (e.g. `test_env`) with your target package installed in it. Make sure to include all `build`, `host`, `run`, and `test` requirements. This will capture the *full* set of packages you need to build your target package in `dojo`.
     - After the env is created, run: `conda list -n test_env --explicit`
     - Copy and paste the list of URLs into the `dojo_channel_pkgs.txt` file.
-        - Delete the URLs for any packages that should be removed for the lesson (i.e. the packages that the learner is expected to build on their own).
+        - Delete the URLs for any packages that should be removed for the lesson (i.e. the packages that the learner is expected to debug or build on their own).
 5. Test your lesson (e.g. try out each step yourself).
 6. Add your lesson to the `curriculum.yaml` under one of the topics.
 7. Run `dojo clean` (to get rid of any progress and history that should not be committed upstream).
@@ -129,7 +129,6 @@ pip install -e .
     - Create a PR.
 
 ## TODO
-- Move this repo to the anaconda-distribution org (! run `dojo clean` !)
 - Lesons to add:
     - Create a patch (including on GitHub using .patch extension!)
     - Port a patch
