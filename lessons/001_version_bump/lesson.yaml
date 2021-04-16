@@ -60,6 +60,8 @@ prompts:
   - |
     Go back to the meta.yaml. 
     Update the version number to "4.56.0", and paste in the new sha256 value.
+
+    (If you need the path to the recipe again, run `dojo c -v`)
   - |
     Build the package: 
 
