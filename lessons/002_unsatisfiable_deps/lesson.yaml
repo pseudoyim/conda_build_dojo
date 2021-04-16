@@ -79,7 +79,7 @@ prompts:
     We know that conda-build needs to create environments using the dependencies listed in the recipe's meta.yaml file.
     So open that file and take a look at the required packages.
 
-      vi training_feedstocks/tqdm-feedstock/recipe/meta.yaml
+      vim training_feedstocks/tqdm-feedstock/recipe/meta.yaml
 
   - |
     The required packages are listed under the "requirements" key:
@@ -162,7 +162,9 @@ prompts:
   - |
     Now try this comamnd again and let's see if "pip" is now installable:
 
-      conda create -n zz_test --dry-run pip
+      conda create -n zz_test --use-local --dry-run pip
+
+      (notice we are adding "--use-local" so conda knows to look for locally built packages)
 
   - |
     We can now install "pip", which means we should now have all of our dependencies satisfied to build "tqdm".
