@@ -28,7 +28,8 @@ def clean_history_and_progress():
     Deletes history.csv and progress.csv files.
     '''
     while True:
-        user_response = str(input(f'CONFIRM: Are you sure you want to delete ALL of your history and progress files? (y/n) '))
+        user_response = str(input(Fore.RED + f'CONFIRM: Are you sure you want to delete ALL of your history and progress files? (y/n) '))
+        print(Style.RESET_ALL)
         if user_response.lower() not in ['y', 'n']:
             print('Sorry, I did not understand.')
         else:

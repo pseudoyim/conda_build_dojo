@@ -40,6 +40,7 @@ RUN yum install -y \
   wget \
   xorg-x11-server-Xvfb \
   chrpath \
+  vim \
   && yum clean all
 
 WORKDIR /build_scripts
@@ -47,6 +48,9 @@ ENV CONDA_SHOW_CHANNEL_URLS 1
 ENV CONDA_ADD_PIP_AS_PYTHON_DEPENDENCY 0
 COPY install_miniconda.sh /build_scripts
 RUN ./install_miniconda.sh
+COPY install_dojo.sh /build_scripts
+RUN chmod ugo+x /build_scripts/install_dojo.sh
+RUN echo 'alias start="bash /build_scripts/install_dojo.sh"' >> ~/.bashrc
 
 # Update conda and install git and conda-build.
 RUN export PATH="/opt/conda/bin:${PATH}" && \

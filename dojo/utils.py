@@ -138,6 +138,10 @@ def search_tag(search_tag):
                 match = [title, lesson_name, objectives, tag]
                 results.append(match)
 
+    if not results:
+        print(f'No results for: "{search_tag}"')
+        sys.exit()
+
     print(Fore.CYAN + f'\nSearch results for: "{search_tag}"')
     print(tabulate(sorted(results), headers=['Title', 'Lesson Name', 'Objectives', 'Matching Tag'], maxcolwidths=[30, 30, 30, 30], tablefmt="grid"))
     print(Style.RESET_ALL)    
