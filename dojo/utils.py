@@ -275,8 +275,17 @@ def show_lessons(status=None):
     else:
         final = df_results.values.tolist()
 
+    if len(final) == 0:
+        if status == 'done':
+            print('You have not completed any lessons. Begin your journey today!')
+            sys.exit(0)
+        elif status == 'not_done':
+            print('You have completed all of the available lesssons. How about you create one of your own now? ;D')
+            sys.exit(0)
+
     print(Fore.CYAN + tabulate(sorted(final), headers=columns, maxcolwidths=[30, 30, 30, 30, 30, 30, 30], tablefmt="grid"))
-    print(Style.RESET_ALL)    
+    print('  Start a lesson by running: dojo start <Lesson name>')
+    print(Style.RESET_ALL)
 
 def create_lesson_progress(lesson_name):
     ts = get_timestamp_for_action()
