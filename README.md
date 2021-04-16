@@ -15,7 +15,7 @@ a hall or place for immersive learning or meditation.
 
 
 ## Requirements
-- A system running some Unix variant
+- A system running some Unix variant (e.g. MacOS or Linux)
 - Docker
 
 
