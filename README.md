@@ -43,7 +43,7 @@ a hall or place for immersive learning or meditation.
     ```
 5. Run the Docker container, mounted to the local directory on your host that is the parent to `aggregate` and `conda_build_dojo`.
     ```
-    docker run -it --mount 'src=</absolute/path/to/conda_build_dojo_and_aggregate_parent>,target=/home/,type=bind' dojo_c3i_linux_64 /bin/bash
+    docker run -it --mount 'src=</absolute/path/to/conda_build_dojo_and_aggregate_parent>,target=/home/,type=bind' dojo_c3i_linux_64
 
     # EXAMPLE (if `aggregate` and `conda_build_dojo` share the same parent directory called `projects`):
     docker run -it --mount 'src=/Users/pyim/shared/projects/,target=/home/,type=bind' dojo_c3i_linux_64
