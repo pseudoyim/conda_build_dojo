@@ -71,18 +71,18 @@ a hall or place for immersive learning or meditation.
     ```
 
 ### Getting updates
-In the future, when you need to pull updates from the upstream repo (e.g. new lessons, bug fixes, or enhancements), run:
+In the future, when you need to pull updates from the upstream repo (e.g. new lessons, bug fixes, or enhancements), run this form your host machine (**not** the Docker container):
 ```
 git pull upstream main
-
-# Re-install `dojo` with the latest updates.
+```
+Then. if you have a running container, run this to re-install `dojo` with the updates:
+```
 start
 ```
 
-
 ## How to contribute a lesson
-1. Checkout a dev branch.
-2. Run:
+1. From your host machine, checkout a dev branch.
+2. From the Docker container, run:
     ```
     dojo create_lesson --name <LESSON_NAME>
     ```
@@ -103,30 +103,17 @@ start
 
 
 ## Development
+If you're planning to make a change to the [upstream repo](https://www.github.com/anaconda-distribution/conda_build_dojo), do the following:
+1. From your host machine, checkout a dev branch.
+2. Make your changes.
+3. Test your changes in the Docker container.
+4. Run `dojo clean` (to get rid of any progress and history that should not be committed upstream).
+5. Commit and push your changes to the [upstream repo](https://www.github.com/anaconda-distribution/conda_build_dojo).
+    ```
+    git push upstream <YOUR DEV BRANCH>
+    ```
+6. Create a PR.
 
-1. Spin up the `c3i_linux-64` docker image, mounted to a path that can reach your clone of the repo and `aggregate`.
-2. From this repo's root directory, create the conda environment.
-    ```
-    conda env create --file env.yaml
-    ```
-3. Activate the conda environment.
-    ```
-    conda activate dojo_dev
-    ```
-4. Install this repo in dev mode.
-    ```
-    pip install -e .
-    ```
-5. If you're planning to make a change to the [upstream repo](https://www.github.com/anaconda-distribution/conda_build_dojo), do the following:
-    - Checkout a dev branch.
-    - Make your changes.
-    - Test your changes.
-    - Run `dojo clean` (to get rid of any progress and history that should not be committed upstream).
-    - Commit and push your changes to the [upstream repo](https://www.github.com/anaconda-distribution/conda_build_dojo).
-        ```
-        git push upstream <YOUR DEV BRANCH>
-        ```
-    - Create a PR.
 
 ## TODO
 - Lesons to add:
