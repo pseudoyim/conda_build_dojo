@@ -93,7 +93,7 @@ def main():
         )
 
     # Subcommand: jump
-    help_msg_jump = '''(j)ump to a specific step in the current lesson.'''
+    help_msg_jump = '''(j)ump: Jump to a specific step in the current lesson.'''
     subcmd_jump = subparsers.add_parser('j', help=help_msg_jump)
     subcmd_jump.add_argument(
         'step_number',
